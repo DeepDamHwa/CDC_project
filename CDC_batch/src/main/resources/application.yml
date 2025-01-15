@@ -1,0 +1,17 @@
+server:
+  port: 8082
+spring:
+  datasource:
+    url: ${ORACLE_URL}
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    username: ${ORACLE_USER}
+    password: ${ORACLE_PASSWORD}
+
+custom:
+  kafka-url: ${KAFKA_URL}
+
+logging:
+  level:
+    org:
+      springframework:
+        kafka: DEBUG

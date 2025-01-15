@@ -1,0 +1,26 @@
+custom:
+  kafka-url: 222.112.156.89:9093
+server:
+  port: 8080
+spring:
+  datasource:
+    url: ${ORACLE_URL}
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    username: ${ORACLE_USER}
+    password: ${ORACLE_PASSWORD}
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        auto_quote_keyword: true
+
+  logging:
+    level:
+      org:
+        hibernate:
+          SQL: DEBUG
+          type:
+            descriptor:
+              sql:
+                BasicBinder: TRACE
