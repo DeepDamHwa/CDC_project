@@ -1,1 +1,1 @@
-# 나를 읽어 파일
+# CDC(Change Data Capture)
