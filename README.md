@@ -136,7 +136,7 @@
 3. Payload 서버가 Kafka에 발행된 로그의 ROW_ID값을 이용해 Oracle로부터 실제 데이터를 조회한다.
 4. 조회한 데이터와 필요한 정보를 객체에 담아 Kafaka로 발행한다.(payload_topic)
 5. Consumer 서버가 Kafka로부터 데이터를 가져와 MySql에 동기화한다.
-
+<br><br>
 ## 🔗 시스템 개선 과정
 #### 1. 초기 시스템
 <div align="center">
@@ -145,7 +145,7 @@
 
 Spring Batch 서버에 Oracle과 MySql을 연결해, Oracle의 변경 사항을 읽어 MySql로 바로 동기화.
 
-한계 : 
+**한계** : 
 - Spring Batch가 조회, 처리, 저장을 모두 책임지기 때문에, 데이터량이 많아질 경우 Spring Batch에 병목 현상
 발생 가능성 높음
 
@@ -155,11 +155,11 @@ Spring Batch 서버에 Oracle과 MySql을 연결해, Oracle의 변경 사항을 
 <img src="sources/CDCarchitecture_2.png" style="width: 100%;"><br>
 Kafka를 도입해 데이터를 조회하는 역할과 적재하는 역할을 분리.
 
-개선 사항 : 
+**개선 사항** : 
 - 기존의 모든 데이터 처리 과정을 부담했던 Spring Batch 서버의 역할을 분리하므로써 부하 감소
 - 데이터 조회와 데이터 적재 과정이 분리되어 유지보수와 장애대응이 용이해짐.
 
-한계 :
+**한계** :
 - Spring Batch가 모든 데이터 처리(로그 읽기, 가공, Kafka 전송)를 단독으로 수행하기 때문에 서버에 부하가 집중됌
 
 <br>
