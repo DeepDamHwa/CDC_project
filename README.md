@@ -139,6 +139,10 @@
 
 ## 🔗 시스템 개선 과정
 #### 1. 초기 시스템
+<div align="center">
+    <img src="sources/CDCarchitecture_1.png" style="width: 70%;"><br>
+</div>
+
 Spring Batch 서버에 Oracle과 MySql을 연결해, Oracle의 변경 사항을 읽어 MySql로 바로 동기화.
 
 한계 : 
@@ -148,6 +152,7 @@ Spring Batch 서버에 Oracle과 MySql을 연결해, Oracle의 변경 사항을 
 <br>
 
 #### 2. Kafka 도입
+<img src="sources/CDCarchitecture_2.png" style="width: 100%;"><br>
 Kafka를 도입해 데이터를 조회하는 역할과 적재하는 역할을 분리.
 
 개선 사항 : 
@@ -160,7 +165,7 @@ Kafka를 도입해 데이터를 조회하는 역할과 적재하는 역할을 �
 <br>
 
 #### 3. 작업 부하 분산을 위한 시스템 구조 분리
-<img src="sources/CDC아키텍처_최종.png" style="width: 100%;"><br>
+<img src="sources/CDCarchitecture_3.png" style="width: 100%;"><br>
 - 데이터 조회, 데이터 처리, 데이터 적재로? 역할을 분리하므로써 서버의 부하 감소.
 - 유지보수 및 장애 대응 용이
 - 시스템 확장성 증가
