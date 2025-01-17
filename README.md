@@ -1,10 +1,12 @@
 <br>
-<img src="https://capsule-render.vercel.app/api?type=venom&height=250&color=gradient&text=CDC(Change%20Data%20Chapture)&section=header&fontSize=60&fontAlignY=30&animation=fadeIn&rotate=0&desc=Oracle%20to%20MySQL&descSize=30&reversal=false" style="width: 120%;" />
+<img src="https://capsule-render.vercel.app/api?type=venom&height=250&color=0:8871e5,100:b678c4&stroke=b678c4&text=CDC(Change%20Data%20Chapture)&section=header&fontSize=60&fontAlignY=30&animation=fadeIn&rotate=0&desc=Oracle%20to%20MySQL&descSize=30&reversal=false" style="width: 120%;" />
+
+
+
 <!-- <br>
 <div align="center">
 <img src="https://github.com/user-attachments/assets/3f6df515-9e11-4b63-b4e1-c35d22176721" style="width: 60%;">
 </div> -->
-
 <br>
 
 ## 팀원 소개
@@ -143,32 +145,39 @@
     <img src="sources/CDCarchitecture_1.png" style="width: 70%;"><br>
 </div>
 
-Spring Batch 서버에 Oracle과 MySql을 연결해, Oracle의 변경 사항을 읽어 MySql로 바로 동기화.
+> Spring Batch 서버에 Oracle과 MySql을 연결해, Oracle의 변경 사항을 읽어 MySql로 바로 동기화.</td>
 
-**한계** : 
-- Spring Batch가 조회, 처리, 저장을 모두 책임지기 때문에, 데이터량이 많아질 경우 Spring Batch에 병목 현상
+> **한계** : Spring Batch가 조회, 처리, 저장을 모두 책임지기 때문에, 데이터량이 많아질 경우 Spring Batch에 병목 현상
 발생 가능성 높음
+
+[//]: # (Spring Batch 서버에 Oracle과 MySql을 연결해, Oracle의 변경 사항을 읽어 MySql로 바로 동기화.)
+
+[//]: # (**한계** : )
+
+[//]: # (- Spring Batch가 조회, 처리, 저장을 모두 책임지기 때문에, 데이터량이 많아질 경우 Spring Batch에 병목 현상)
+
+[//]: # (발생 가능성 높음)
 
 <br>
 
 #### 2. Kafka 도입
 <img src="sources/CDCarchitecture_2.png" style="width: 100%;"><br>
-Kafka를 도입해 데이터를 조회하는 역할과 적재하는 역할을 분리.
+> Kafka를 도입해 데이터를 조회하는 역할과 적재하는 역할을 분리.
 
-**개선 사항** : 
-- 기존의 모든 데이터 처리 과정을 부담했던 Spring Batch 서버의 역할을 분리하므로써 부하 감소
-- 데이터 조회와 데이터 적재 과정이 분리되어 유지보수와 장애대응이 용이해짐.
+> **개선 사항** : 
+> - 기존의 모든 데이터 처리 과정을 부담했던 Spring Batch 서버의 역할을 분리하므로써 부하 감소
+> - 데이터 조회와 데이터 적재 과정이 분리되어 유지보수와 장애대응이 용이해짐.
 
-**한계** :
-- Spring Batch가 모든 데이터 처리(로그 읽기, 가공, Kafka 전송)를 단독으로 수행하기 때문에 서버에 부하가 집중됌
+> **한계** :
+> - Spring Batch가 모든 데이터 처리(로그 읽기, 가공, Kafka 전송)를 단독으로 수행하기 때문에 서버에 부하가 집중됌
 
 <br>
 
 #### 3. 작업 부하 분산을 위한 시스템 구조 분리
 <img src="sources/CDCarchitecture_3.png" style="width: 100%;"><br>
-- 데이터 조회, 데이터 처리, 데이터 적재로? 역할을 분리하므로써 서버의 부하 감소.
-- 유지보수 및 장애 대응 용이
-- 시스템 확장성 증가
+> - 데이터 조회, 데이터 처리, 데이터 적재로? 역할을 분리하므로써 서버의 부하 감소.
+> - 유지보수 및 장애 대응 용이
+> - 시스템 확장성 증가
 <br>
 
 ## 🔗 문제 해결 사례
