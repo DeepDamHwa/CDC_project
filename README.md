@@ -1,6 +1,8 @@
 <br>
-<img src="https://capsule-render.vercel.app/api?type=venom&fontColor=e5eae5&height=250&color=gradient&text=CDC(Change%20Data%20Chapture)&section=header&fontSize=60&fontAlignY=30&animation=fadeIn&rotate=0&desc=Oracle%20to%20MySQL&descSize=30&reversal=false" style="width: 120%;" />
 
+<img src="https://capsule-render.vercel.app/api?type=waving&height=250&color=gradient&customColorList=30&text=CDC(Change%20Data%20Chapture)&section=header&fontSize=50&fontAlignY=30&animation=fadeIn&rotate=0&desc=Oracle%20to%20MySQL&descSize=30&reversal=false" style="width: 120%;" />
+
+[//]: # (<img src="https://capsule-render.vercel.app/api?type=soft&height=250&color=gradient&#40;7AC8C2,1C5C7F&#41;&text=CDC&#40;Change%20Data%20Chapture&#41;&section=header&fontSize=60&fontAlignY=30&animation=fadeIn&rotate=0&desc=Oracle%20to%20MySQL&descSize=30&reversal=false" style="width: 120%;" />)
 <!-- <br>
 <div align="center">
 <img src="https://github.com/user-attachments/assets/3f6df515-9e11-4b63-b4e1-c35d22176721" style="width: 60%;">
