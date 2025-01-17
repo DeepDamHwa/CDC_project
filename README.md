@@ -1,5 +1,5 @@
 <br>
-<img src="https://capsule-render.vercel.app/api?type=venom&fontColor=A9A9A9&height=250&color=gradient&text=CDC(Change%20Data%20Chapture)&section=header&fontSize=60&fontAlignY=30&animation=fadeIn&rotate=0&desc=Oracle%20to%20MySQL&descSize=30&reversal=false" style="width: 120%;" />
+<img src="https://capsule-render.vercel.app/api?type=venom&fontColor=e5eae5&height=250&color=gradient&text=CDC(Change%20Data%20Chapture)&section=header&fontSize=60&fontAlignY=30&animation=fadeIn&rotate=0&desc=Oracle%20to%20MySQL&descSize=30&reversal=false" style="width: 120%;" />
 
 <!-- <br>
 <div align="center">
