@@ -20,7 +20,7 @@
     <td align="center"><a href="https://github.com/SihyunSeo"><img src="sources/시현_프로필.png" width="150px;" alt=""></td>
     <td align="center"><a href="https://github.com/kangkings"><img src="sources/태성_프로필.png" width="150px;" alt=""></td>
     <td align="center"><a href="https://github.com/706com"><img src="sources/동현_프로필.png" width="150px;" alt=""></td>
-    <td align="center"><a href="https://github.com/jimnyy"><img src="sources/별_프로필.png" width="150px;" alt=""></td>
+    <td align="center"><a href="https://github.com/jimnyy"><img src="https://github.com/user-attachments/assets/9694e7c1-19b0-4ea8-90a9-aac55becf3f6" width="150px;" alt=""></td>
     <td align="center"><a href="https://github.com/shinebyul"><img src="sources/별_프로필.png" width="150px;" alt=""></td>
   </tr>
   <tr>
@@ -36,7 +36,7 @@
 
 ### 목차
 - [기술 스택](#-기술-스택)
-- [CDC 프로젝트 소개](#-CDC-Project-소개)
+- [CDC 프로젝트 소개](#%EF%B8%8E%EF%B8%8E-cdc-project-소개)
 - [프로젝트 설계](#-프로젝트-설계)
 - [시스템 개선 과정](#-시스템-개선-과정)
 - [문제 해결 사례](#-문제-해결-사례)
