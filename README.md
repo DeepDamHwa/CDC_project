@@ -20,7 +20,7 @@
     <td align="center"><a href="https://github.com/SihyunSeo"><img src="sources/시현_프로필.png" width="150px;" alt=""></td>
     <td align="center"><a href="https://github.com/kangkings"><img src="sources/태성_프로필.png" width="150px;" alt=""></td>
     <td align="center"><a href="https://github.com/706com"><img src="sources/동현_프로필.png" width="150px;" alt=""></td>
-    <td align="center"><a href="https://github.com/jimnyy"><img src="https://github.com/user-attachments/assets/9694e7c1-19b0-4ea8-90a9-aac55becf3f6" width="150px;" alt=""></td>
+    <td align="center"><a href="https://github.com/jimnyy"><img src="sources/지민_프로필.png" width="150px;" alt=""></td>
     <td align="center"><a href="https://github.com/shinebyul"><img src="sources/별_프로필.png" width="150px;" alt=""></td>
   </tr>
   <tr>
