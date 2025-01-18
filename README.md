@@ -105,6 +105,7 @@
 >
 >- 덤프 시점과 로드 완료 시점 간의 시간차로 인해 데이터의 최신 상태를 보장하기 어려웠다. <br>
 
+<br>
 이러한 문제점들로 인해 서버 다운타임을 최소화하면서 마이그레이션을 수행할 방법에 대해 고민하게 되었고, 실시간으로 데이터 변경 사항을 추적하고 동기화할 수 있는 **CDC(Change Data Capture)** 환경을 설계하고 구축하는 것을 목표로 삼게 되었다.
 
 CDC 방식을 **선택하게 된 이유**는 다음과 같다.
@@ -162,9 +163,7 @@ CDC 방식을 **선택하게 된 이유**는 다음과 같다.
 
 
 ## 🔗 프로젝트 설계
-
-[//]: # (### [4. 요구사항 정의서]&#40;https://docs.google.com/spreadsheets/d/10twxxTMI7e_H_zHhxfUHqkkvaU0XMbR9/edit?usp=sharing&ouid=109538896843972820204&rtpof=true&sd=true&#41;</a>)
-이미지 넣기
+<img src="sources/CDCarchitecture_3.png" style="width: 100%;"><br>
 #### 시스템 프로세스
 1. ChangeLog 서버가 Oracle에서 Offset 값을 읽어온다.
 
@@ -177,7 +176,9 @@ CDC 방식을 **선택하게 된 이유**는 다음과 같다.
 3. Payload 서버가 Kafka에 발행된 로그의 ROW_ID값을 이용해 Oracle로부터 실제 데이터를 조회한다.
 4. 조회한 데이터와 필요한 정보를 객체에 담아 Kafaka로 발행한다.(payload_topic)
 5. Consumer 서버가 Kafka로부터 데이터를 가져와 MySql에 동기화한다.
-<br><br>
+
+
+<br><br><br>
 ## 🔗 시스템 개선 과정
 #### 1. 초기 시스템
 <div align="center">
