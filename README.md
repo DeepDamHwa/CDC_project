@@ -178,6 +178,8 @@ CDC 방식을 **선택하게 된 이유**는 다음과 같다.
 4. 조회한 데이터와 필요한 정보를 MySQL이 적재 가능한 객체 형태로 담아 Kafaka로 발행한다.(payload_topic)
 5. Consumer 서버가 Kafka로부터 데이터를 가져와 MySql에 동기화한다.
 
+**+가장 좌측 Spring Batch는 데이터 변동사항을 주기 위해 주기적으로 대량의 DML 구문을 날리는 batch 서버를 의미 (1시간의 약 100,000개의 DML 양으로 설정)**
+
 
 <br><br><br>
 ## 🔗 시스템 개선 과정
@@ -190,6 +192,7 @@ CDC 방식을 **선택하게 된 이유**는 다음과 같다.
 
 > **한계** : Spring Batch가 조회, 처리, 저장을 모두 책임지기 때문에, 데이터량이 많아질 경우 Spring Batch에 병목 현상
 발생 가능성 높음
+
 
 [//]: # (Spring Batch 서버에 Oracle과 MySql을 연결해, Oracle의 변경 사항을 읽어 MySql로 바로 동기화.)
 
