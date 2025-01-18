@@ -14,7 +14,8 @@
 [//]: # (> **[한화시스템 BEYOND SW캠프 6기] Final Project**)
 
 > **딥담화 DeepDamHwa**<br>
-> 주간 기술 지식 리뷰를 베이스로 실제 기술들을 사용해보는 스터디 모임입니다. 
+> 개발 기술스택을 주제로 매주 리뷰를 통해, 기술을 딥하게 학습하는 스터디 입니다. <br>
+이 스터디는 실습을 통해 실무에서 적용할 수 있는 경험을 쌓는 것을 목표로 합니다. 
 <table align="center">
  <tr>
     <td align="center"><a href="https://github.com/SihyunSeo"><img src="sources/시현_프로필.png" width="150px;" alt=""></td>
