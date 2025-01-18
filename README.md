@@ -86,7 +86,7 @@
 [//]: # (<img src= "https://github.com/user-attachments/assets/2a07b47d-e074-4821-b5ac-3b445c6a9f1a">)
 
 ### 프로젝트 배경
-딥담화 기술 리뷰에서 다뤘던 주제 "Data Migration (Oracle to MySQL)"<br>
+딥담화 기술 리뷰에서 다뤘던 주제 **Data Migration (Oracle to MySQL)**<br>
 초기에는 대량 데이터를 옮기는 가장 일반적인 방법인 "덤프-로드 방식"을 활용하여 마이그레이션을 진행했다.<br>
 이 방식은 데이터를 한 번에 덤프한 후 MySQL로 로드하는 단순한 과정으로, 구현이 비교적 쉬운 장점이 있다.
 
