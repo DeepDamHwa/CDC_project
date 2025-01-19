@@ -230,4 +230,4 @@ CDC 방식을 **선택하게 된 이유**는 다음과 같다.
 1. [트랜잭션 격리 수준을 고려한 로그 수집](https://github.com/DeepDamHwa/CDC_project/wiki/%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98-%EA%B2%A9%EB%A6%AC-%EC%88%98%EC%A4%80%EC%9D%84-%EA%B3%A0%EB%A0%A4%ED%95%9C-%EB%A1%9C%EA%B7%B8-%EC%88%98%EC%A7%91)
 
   
-2. [Offset과 로그 파일 관리를 통한 로그 데이터 수집 시작 위치 확인]([https://github.com/DeepDamHwa/CDC_project/wiki/Offset%EA%B4%80%EB%A6%AC%EB%A5%BC-%ED%86%B5%ED%95%9C-%EB%A1%9C%EA%B7%B8-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%88%98%EC%A7%91-%EC%8B%9C%EC%9E%91-%EC%9C%84%EC%B9%98-%ED%99%95%EC%9D%B8](https://github.com/DeepDamHwa/CDC_project/wiki/Offset%EA%B3%BC-%EB%A1%9C%EA%B7%B8%ED%8C%8C%EC%9D%BC-%EA%B4%80%EB%A6%AC%EB%A5%BC-%ED%86%B5%ED%95%9C-%EB%A1%9C%EA%B7%B8-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%88%98%EC%A7%91-%EC%8B%9C%EC%9E%91-%EC%9C%84%EC%B9%98-%ED%99%95%EC%9D%B8))
+2. [Offset과 로그 파일 관리를 통한 로그 데이터 수집 시작 위치 확인](https://github.com/DeepDamHwa/CDC_project/wiki/Offset%EA%B3%BC-%EB%A1%9C%EA%B7%B8%ED%8C%8C%EC%9D%BC-%EA%B4%80%EB%A6%AC%EB%A5%BC-%ED%86%B5%ED%95%9C-%EB%A1%9C%EA%B7%B8-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%88%98%EC%A7%91-%EC%8B%9C%EC%9E%91-%EC%9C%84%EC%B9%98-%ED%99%95%EC%9D%B8)
