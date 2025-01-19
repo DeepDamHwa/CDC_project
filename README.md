@@ -226,7 +226,8 @@ CDC 방식을 **선택하게 된 이유**는 다음과 같다.
 <br>
 
 ## 🔗 문제 해결 사례
-1. 트랜잭션 격리 수준을 고려한 로그 수집
 
+1. [트랜잭션 격리 수준을 고려한 로그 수집]([http://zeldahagoshipda.com](https://github.com/DeepDamHwa/CDC_project/wiki/%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98-%EA%B2%A9%EB%A6%AC-%EC%88%98%EC%A4%80%EC%9D%84-%EA%B3%A0%EB%A0%A4%ED%95%9C-%EB%A1%9C%EA%B7%B8-%EC%88%98%EC%A7%91))
 
+  
 2. Offset관리를 통한 로그 데이터 수집 시작 위치 확인
