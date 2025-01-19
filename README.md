@@ -205,7 +205,26 @@ CDC 방식을 **선택하게 된 이유**는 다음과 같다.
 
 ## 🔗 문제 해결 사례
 
-1. [트랜잭션 격리 수준을 고려한 로그 수집](https://github.com/DeepDamHwa/CDC_project/wiki/%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98-%EA%B2%A9%EB%A6%AC-%EC%88%98%EC%A4%80%EC%9D%84-%EA%B3%A0%EB%A0%A4%ED%95%9C-%EB%A1%9C%EA%B7%B8-%EC%88%98%EC%A7%91)
+
+
+### [문제 1]  
+[트랜잭션 수행 단위 내에서 commit 되지 않은 DML 도 redo 로그 파일에 기록되는 현상 발생](https://github.com/DeepDamHwa/CDC_project/wiki/%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98-%EA%B2%A9%EB%A6%AC-%EC%88%98%EC%A4%80%EC%9D%84-%EA%B3%A0%EB%A0%A4%ED%95%9C-%EB%A1%9C%EA%B7%B8-%EC%88%98%EC%A7%91)
+  
+### [개선]  
+Redo_Log 데이터의 XIDUSN값과, XIDSLT값을 활용해 commit 된 트랜잭션 데이터만 조회하도록 개선  
+  
+### [평가]
+커밋되지 않은 로그까지 동기화할 경우, 트랜잭션 단위에서 실패 시 롤백 대응이 불가능하다고 판단  
+Rollback 상황에 대한 대처와 일관성
 
   
-2. [Offset과 로그 파일 관리를 통한 로그 데이터 수집 시작 위치 확인](https://github.com/DeepDamHwa/CDC_project/wiki/Offset%EA%B3%BC-%EB%A1%9C%EA%B7%B8%ED%8C%8C%EC%9D%BC-%EA%B4%80%EB%A6%AC%EB%A5%BC-%ED%86%B5%ED%95%9C-%EB%A1%9C%EA%B7%B8-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%88%98%EC%A7%91-%EC%8B%9C%EC%9E%91-%EC%9C%84%EC%B9%98-%ED%99%95%EC%9D%B8)
+<br>
+
+### [문제 2]  
+[로그 파일 데이터가 가득차서 다음 로그 파일로 넘어가는 시점에서 일부 데이터가 누락되는 문제 발생](https://github.com/DeepDamHwa/CDC_project/wiki/Offset%EA%B3%BC-%EB%A1%9C%EA%B7%B8%ED%8C%8C%EC%9D%BC-%EA%B4%80%EB%A6%AC%EB%A5%BC-%ED%86%B5%ED%95%9C-%EB%A1%9C%EA%B7%B8-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%88%98%EC%A7%91-%EC%8B%9C%EC%9E%91-%EC%9C%84%EC%B9%98-%ED%99%95%EC%9D%B8)
+
+### [개선]   
+이전 Batch 작업에서 가용된 로그파일의 번호부터 현재 가용중인 로그파일의 번호 까지의 로그 파일을 조회하여 누락 데이터 방지
+
+### [평가]  
+누락데이터 없이 이전 로그 파일부터 현 시점의 로그 파일까지의 데이터 모두 조회 및 전송하도록 개선  
