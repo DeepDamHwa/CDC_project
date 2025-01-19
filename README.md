@@ -63,45 +63,25 @@
 <img src="https://img.shields.io/badge/kafka-231F20?style=for-the-badge&logo=apachekafka&logoColor=white" style="border-radius: 5px;">
 <img src="https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white" style="border-radius: 5px;">
 
-
-[//]: # (#### &nbsp;　[ Communication ])
-
-[//]: # (&nbsp;&nbsp;&nbsp;&nbsp;)
-
-[//]: # (<img src="https://img.shields.io/badge/discord-326CE5?style=for-the-badge&logo=discord&logoColor=white" style="border-radius: 5px;">)
-
-[//]: # (<img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white" style="border-radius: 5px;">)
-
-[//]: # (<img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white" style="border-radius: 5px;">)
-
-[//]: # (<img src="https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white" style="border-radius: 5px;">)
-
-[//]: # (<br><br><br>)
-
-[//]: # (## 📚 Enadu 사이트 바로가기)
-
-[//]: # (### [Enadu website]&#40;https://enadu.o-r.kr&#41;</a>)
 <br><br>
 ## ︎︎🔗 CDC Project 소개
-
-[//]: # (<img src= "https://github.com/user-attachments/assets/2a07b47d-e074-4821-b5ac-3b445c6a9f1a">)
 
 ### 프로젝트 배경
 딥담화 기술 리뷰에서 다뤘던 주제 **Data Migration (Oracle to MySQL)**<br>
 초기에는 대량 데이터를 옮기는 가장 일반적인 방법인 "덤프-로드 방식"을 활용하여 마이그레이션을 진행했다.<br>
 이 방식은 OracleDB 데이터를 한 번에 덤프한 후 MySQL로 로드하는 단순한 과정으로, 구현이 비교적 쉬운 장점이 있다.
 
-그러나 실제로 마이그레이션을 수행하는 과정에서 다음과 같은 **문제점**을 발견하였다.
+그러나 실제로 마이그레이션을 수행하는 과정에서 다음과 같은 **문제점**들을 발견하였다.
 
->**1. 서버 다운타임 발생:**
->
->- 대량의 데이터를 덤프하고 로드하는 동안 데이터베이스를 중단해야 했기 때문에 서비스의 연속성이 중단되었다.
+[//]: # (**1. 서버 다운타임 발생:**)
+[//]: # (>)
+[//]: # (>- 기존 데이터를 덤프하고 로드하는 동안 가적으로 발생한를 중단해야 했기 때문에 다운타임 .)
 
->**2. 실시간 데이터 동기화 부족:**
+>**1. 실시간 데이터 동기화 부족:**
 >
 >- 마이그레이션이 진행되는 동안 새로 삽입되거나 수정된 데이터가 누락될 가능성이 있었다.
 
->**3. 데이터 일관성 문제:**
+>**2. 데이터 일관성 문제:**
 >
 >- 덤프 시점과 로드 완료 시점 간의 시간차로 인해 데이터의 최신 상태를 보장하기 어려웠다. <br>
 
@@ -121,7 +101,7 @@ CDC 방식을 **선택하게 된 이유**는 다음과 같다.
 
 >**3. 데이터 일관성 보장:**
 >
->- 덤프와 로드 간의 시간차로 인해 데이터 불일치가 발생할 가능성이 있었지만, CDC는 데이터베이스 변경 로그를 준실시간성으로 감지하여 최신 데이터를 지속적으로 동기화함으로써 데이터 일관성을 유지할 수 있었다.
+>- 덤프와 로드 간의 시간차로 인해 데이터 불일치가 발생할 가능성이 있었지만, CDC는 데이터베이스 변경 로그를 실시간성으로 감지하여 최신 데이터를 지속적으로 동기화함으로써 데이터 일관성을 유지할 수 있었다.
 
 >**4. 확장성과 유연성:**
 >
@@ -131,11 +111,11 @@ CDC 방식을 **선택하게 된 이유**는 다음과 같다.
   <br>
 
 ###  프로젝트 목표
-실시간으로 삽입, 수정, 삭제가 발생하는 Oracle 데이터의 로그를 수집하여, MySQL에 적합한 데이터로 전처리 후 MySQL에 적용하는 CDC(Change Data Capture) 시스템을 구축.
+실시간으로 삽입, 수정, 삭제가 발생하는 Oracle 데이터의 로그를 수집하여, MySQL에 적합한 데이터로 전처리 후 MySQL에 적용하는 CDC 시스템을 구축.
 
-- `change_log` : Oracle의 redo 로그를 수집해 Kafka로 발행. Offset을 활용해 변동 데이터를 지속적으로 추적 및 처리.<br>
-- `payload` : Kafka에 발행된 redo 로그를 읽어 Oracle로부터 실제 데이터를 조회 후 MySQL에 적재 가능한 데이터로 변환 작업 후, Kafka로 다시 발행<br>
-- `consumer` : Kafka에 발행된 데이터를 가져와 MySql DB에 동기화
+- `Log Scanner` : Oracle의 redo 로그를 수집해 Kafka로 발행. Offset을 활용해 변동 데이터를 지속적으로 추적 및 처리.<br>
+- `Data Transformer` : Kafka에 발행된 redo 로그를 읽어 Oracle로부터 실제 데이터를 조회 후 MySQL에 적재 가능한 데이터로 변환 작업 후, Kafka로 다시 발행<br>
+- `Data Loader` : Kafka에 발행된 변경 데이터를 가져와 MySql DB에 동기화
 <br>
 
 [//]: # (### 세부 기능)
@@ -164,17 +144,17 @@ CDC 방식을 **선택하게 된 이유**는 다음과 같다.
 ## 🔗 프로젝트 설계
 <img src="sources/CDCarchitecture_3.png" style="width: 100%;"><br>
 #### 시스템 프로세스
-1. ChangeLog 서버가 OracleDB에 저장된 Offset 값을 읽어온다.
+1. Log Scanner 서버가 OracleDB에 저장된 Offset 값을 읽어온다.
 
-2. Oracle의 Redo_Log로부터 조회 된 Offset 값 이후의 로그를 조회해 Kafka로 발행한다.(change_log_topic)
+2. Oracle의 Redo_Log로부터 조회 된 Offset 값 이후의 로그를 조회해 Kafka로 발행한다.(topic: change_log)
    - 이때, 현재 활성화 된 redo_Log 파일 버전을 확인하기 위해, 저장된 Redo_Log version과 현재 활성화된 Redo_Log version을 비교한다.  
-   -> 만약 version이 같다면, 현재 활성화된 Redo_Log 파일을 LogMiner로 읽어온 후, Offset값 이후의 로그를 조회해 Kafka로 발행한다.  
-   -> 만약 version이 다르다면, Offset에 저장된 값의 Redo_Log 파일을 시작으로 현재 활성화된 Redo_Log 파일까지 모든 로그를 조회해 Kafka로 발행한다.   
+   ➔ 만약 version이 같다면, 현재 활성화된 Redo_Log 파일을 LogMiner로 읽어온 후, Offset값 이후의 로그를 조회해 Kafka로 발행한다.  
+   ➔ 만약 version이 다르다면, Offset에 저장된 값의 Redo_Log 파일을 시작으로 현재 활성화된 Redo_Log 파일까지 모든 로그를 조회해 Kafka로 발행한다.   
    - 데이터 조회는 Redo_Log 파일로 부터 읽은 데이터의 XIDUSN값과, XIDSLT값을 활용해 반드시 commit 된 트랜잭션 데이터만 조회를 진행한다.
 
-3. Payload 서버가 Kafka에 발행된 로그의 ROW_ID값을 이용해 Oracle로부터 실제 데이터를 조회한다.
-4. 조회한 데이터와 필요한 정보를 MySQL이 적재 가능한 객체 형태로 담아 Kafaka로 발행한다.(payload_topic)
-5. Consumer 서버가 Kafka로부터 데이터를 가져와 MySql에 동기화한다.
+3. Data Transformer 서버가 Kafka에 발행된 로그의 ROW_ID값을 이용해 Oracle로부터 실제 데이터를 조회한다.
+4. 조회한 데이터와 필요한 정보를 MySQL이 적재 가능한 객체 형태로 담아 Kafka로 발행한다.(topic: payload)
+5. Data Loader 서버가 Kafka로부터 데이터를 가져와 MySql에 동기화한다.
 
 **+가장 좌측 Spring Batch는 데이터 변동사항을 주기 위해 주기적으로 대량의 DML 구문을 날리는 batch 서버를 의미 (1시간의 약 100,000개의 DML 양으로 설정)**
 
