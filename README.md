@@ -162,7 +162,7 @@ CDC 방식을 **선택하게 된 이유**는 다음과 같다.
 ## 🔗 시스템 개선 과정
 #### 1. 초기 시스템
 <div align="center">
-    <img src="sources/CDCarchitecture_1.png" style="width: 70%;"><br>
+    <img src="https://github.com/user-attachments/assets/75fef291-36da-46cf-9c4a-6f9f92d298be" style="width: 70%;"><br>
 </div>
 
 > Spring Batch 하나의 서버에 Oracle과 MySql을 모두 연결해, Oracle의 변경 사항을 읽어 MySql로 바로 동기화.</td>
@@ -182,7 +182,7 @@ CDC 방식을 **선택하게 된 이유**는 다음과 같다.
 <br>
 
 #### 2. Kafka + 적재 담당 서버 도입
-<img src="sources/CDCarchitecture_2.png" style="width: 100%;"><br>
+<img src="https://github.com/user-attachments/assets/03d0d9f0-35df-494b-b4e6-645f6cdaf596" style="width: 100%;"><br>
 > Kafka와 적재 담당 서버를 도입해 데이터를 조회하는 역할과 적재하는 역할을 분리
 
 > **개선 사항** : 
@@ -196,7 +196,7 @@ CDC 방식을 **선택하게 된 이유**는 다음과 같다.
 <br>
 
 #### 3. 변경 감지 시스템 구조 개선
-<img src="sources/CDCarchitecture_3.png" style="width: 100%;"><br>
+<img src="https://github.com/user-attachments/assets/a3deb804-8540-464a-91d0-fc1613d1cc86" style="width: 100%;"><br>
 > - 로그 데이터 조회 / 실제 ROW 데이터 조회의 역할을 분리함으로써 대용량 처리 용이성 확보
 > - 병목 현상 감소
 > - 장애 대응 용이
