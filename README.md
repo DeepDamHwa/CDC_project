@@ -144,7 +144,7 @@ CDC 방식을 **선택하게 된 이유**는 다음과 같다.
 ## 🔗 프로젝트 설계
 <img src="sources/CDCarchitecture_3.png" style="width: 100%;"><br>
 #### 시스템 프로세스
-1. 사용자에 의해 데이터 변동이 발생한다(삽입,수정,삭제). (Spring Batch로 구현 - 5분마다 700개의 랜덤 DML생성)
+1. 사용자에 의해 데이터 변동(삽입,삭제,수정)이 발생한다. (Spring Batch로 구현 - 5분마다 700개의 랜덤 DML생성)
 2. Log Scanner 서버가 OracleDB에 저장된 Offset 값을 읽어온다.
 
 3. Oracle의 REDO_LOG로부터 조회 된 Offset 값 이후의 로그를 조회해 Kafka로 발행한다.(topic: change_log)
