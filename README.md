@@ -165,7 +165,7 @@ CDC 방식을 **선택하게 된 이유**는 다음과 같다.
     <img src="https://github.com/user-attachments/assets/75fef291-36da-46cf-9c4a-6f9f92d298be" style="width: 70%;"><br>
 </div>
 
-> Spring Batch 하나의 서버에 Oracle과 MySql을 모두 연결해, Oracle의 변경 사항을 읽어 MySql로 바로 동기화.</td>
+>Spring Batch 하나의 서버에 Oracle과 MySql을 모두 연결 및 처리하여, Oracle의 변경 사항을 MySql로 바로 동기화</td>
 
 > **한계** : Spring Batch가 조회, 처리, 저장을 모두 책임지기 때문에, 데이터량이 많아질 경우 Spring Batch에 병목 현상
 발생 가능성 높음
