@@ -144,19 +144,18 @@ CDC 방식을 **선택하게 된 이유**는 다음과 같다.
 ## 🔗 프로젝트 설계
 <img src="sources/CDCarchitecture_3.png" style="width: 100%;"><br>
 #### 시스템 프로세스
-1. Log Scanner 서버가 OracleDB에 저장된 Offset 값을 읽어온다.
+1. 사용자에 의해 데이터 변동이 발생한다(삽입,수정,삭제). (Spring Batch로 구현 - 5분마다 700개의 랜덤 DML생성)
+2. Log Scanner 서버가 OracleDB에 저장된 Offset 값을 읽어온다.
 
-2. Oracle의 REDO_LOG로부터 조회 된 Offset 값 이후의 로그를 조회해 Kafka로 발행한다.(topic: change_log)
+3. Oracle의 REDO_LOG로부터 조회 된 Offset 값 이후의 로그를 조회해 Kafka로 발행한다.(topic: change_log)
    - 이때, 현재 활성화 된 REDO_LOG 파일 버전을 확인하기 위해, 저장된 REDO_LOG version과 현재 활성화된 REDO_LOG version을 비교한다.  
-   ➔ 만약 version이 같다면, 현재 활성화된 REDO_LOG 파일을 LogMiner로 읽어온 후, Offset값 이후의 로그를 조회해 Kafka로 발행한다.  
-   ➔ 만약 version이 다르다면, Offset에 저장된 값의 REDO_LOG 파일을 시작으로 현재 활성화된 REDO_LOG 파일까지 모든 로그를 조회해 Kafka로 발행한다.   
+   &nbsp;&nbsp;➔ 만약 version이 같다면, 현재 활성화된 REDO_LOG 파일을 LogMiner로 읽어온 후, Offset값 이후의 로그를 조회해 Kafka로 발행한다.  
+   &nbsp;&nbsp;➔ 만약 version이 다르다면, Offset에 저장된 값의 REDO_LOG 파일을 시작으로 현재 활성화된 REDO_LOG 파일까지 모든 로그를 조회해 Kafka로 발행한다.   
    - 데이터 조회는 REDO_LOG 파일로 부터 읽은 데이터의 XIDUSN값과, XIDSLT값을 활용해 반드시 commit 된 트랜잭션 데이터만 조회를 진행한다.
 
-3. Data Transformer 서버가 Kafka에 발행된 로그의 ROW_ID값을 이용해 Oracle로부터 실제 데이터를 조회한다.
-4. 조회한 데이터와 필요한 정보를 MySQL이 적재 가능한 객체 형태로 담아 Kafka로 발행한다.(topic: payload)
-5. Data Loader 서버가 Kafka로부터 데이터를 가져와 MySql에 동기화한다.
-
-**+가장 좌측 Spring Batch는 데이터 변동사항을 주기 위해 주기적으로 대량의 DML 구문을 날리는 batch 서버를 의미 (1시간의 약 100,000개의 DML 양으로 설정)**
+4. Data Transformer 서버가 Kafka에 발행된 로그의 ROW_ID값을 이용해 Oracle로부터 실제 데이터를 조회한다.
+5. 조회한 데이터와 필요한 정보를 MySQL이 적재 가능한 객체 형태로 담아 Kafka로 발행한다.(topic: payload)
+6. Data Loader 서버가 Kafka로부터 데이터를 가져와 MySql에 동기화한다.
 
 
 <br><br><br>
@@ -207,7 +206,7 @@ CDC 방식을 **선택하게 된 이유**는 다음과 같다.
 
 ### [1. 트랜잭션 격리 수준을 고려하지 못한 Log 수집](https://github.com/DeepDamHwa/CDC_project/wiki/%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98-%EA%B2%A9%EB%A6%AC-%EC%88%98%EC%A4%80%EC%9D%84-%EA%B3%A0%EB%A0%A4%ED%95%9C-%EB%A1%9C%EA%B7%B8-%EC%88%98%EC%A7%91)
 
-**[문제 1]**
+**[문제]**
 <br>Redo log를 분석하여 데이터를 수집하는 과정에서 트랜잭션 격리 수준을 고려하지 않아, 커밋되지 않은 데이터(테이블에 반영되지 않고 로그에만 존재하는 데이터)가 처리되어 데이터 정합성 문제가 발생함.
   
 **[개선]**
@@ -229,7 +228,7 @@ CDC 방식을 **선택하게 된 이유**는 다음과 같다.
 
 ### [이벤트 처리 실패로 인한 데이터 정합성 문제](https://github.com/DeepDamHwa/CDC_project/edit/main/README.md)
 
-**[에상 문제]**
+**[문제]**
 <br>kafka event 처리가 실패한 경우, 해당 데이터에 대헤 데이터에 반영되지 않아 데이터 정합성 발생
 
 **[예상 개선 사항]**
