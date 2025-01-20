@@ -113,8 +113,8 @@ CDC 방식을 **선택하게 된 이유**는 다음과 같다.
 ###  프로젝트 목표
 실시간으로 삽입, 수정, 삭제가 발생하는 Oracle 데이터의 로그를 수집하여, MySQL에 적합한 데이터로 전처리 후 MySQL에 적용하는 CDC 시스템을 구축.
 
-- `Log Scanner` : Oracle의 redo 로그를 수집해 Kafka로 발행. Offset을 활용해 변동 데이터를 지속적으로 추적 및 처리.<br>
-- `Data Transformer` : Kafka에 발행된 redo 로그를 읽어 Oracle로부터 실제 데이터를 조회 후 MySQL에 적재 가능한 데이터로 변환 작업 후, Kafka로 다시 발행<br>
+- `Log Scanner` : Oracle의 REDO_LOG를 수집해 Kafka로 발행. Offset을 활용해 변동 데이터를 지속적으로 추적 및 처리.<br>
+- `Data Transformer` : Kafka에 발행된 REDO_LOG를 읽어 Oracle로부터 실제 데이터를 조회 후 MySQL에 적재 가능한 데이터로 변환 작업 후, Kafka로 다시 발행<br>
 - `Data Loader` : Kafka에 발행된 변경 데이터를 가져와 MySql DB에 동기화
 <br>
 
@@ -146,11 +146,11 @@ CDC 방식을 **선택하게 된 이유**는 다음과 같다.
 #### 시스템 프로세스
 1. Log Scanner 서버가 OracleDB에 저장된 Offset 값을 읽어온다.
 
-2. Oracle의 Redo_Log로부터 조회 된 Offset 값 이후의 로그를 조회해 Kafka로 발행한다.(topic: change_log)
-   - 이때, 현재 활성화 된 redo_Log 파일 버전을 확인하기 위해, 저장된 Redo_Log version과 현재 활성화된 Redo_Log version을 비교한다.  
-   ➔ 만약 version이 같다면, 현재 활성화된 Redo_Log 파일을 LogMiner로 읽어온 후, Offset값 이후의 로그를 조회해 Kafka로 발행한다.  
-   ➔ 만약 version이 다르다면, Offset에 저장된 값의 Redo_Log 파일을 시작으로 현재 활성화된 Redo_Log 파일까지 모든 로그를 조회해 Kafka로 발행한다.   
-   - 데이터 조회는 Redo_Log 파일로 부터 읽은 데이터의 XIDUSN값과, XIDSLT값을 활용해 반드시 commit 된 트랜잭션 데이터만 조회를 진행한다.
+2. Oracle의 REDO_LOG로부터 조회 된 Offset 값 이후의 로그를 조회해 Kafka로 발행한다.(topic: change_log)
+   - 이때, 현재 활성화 된 REDO_LOG 파일 버전을 확인하기 위해, 저장된 REDO_LOG version과 현재 활성화된 REDO_LOG version을 비교한다.  
+   ➔ 만약 version이 같다면, 현재 활성화된 REDO_LOG 파일을 LogMiner로 읽어온 후, Offset값 이후의 로그를 조회해 Kafka로 발행한다.  
+   ➔ 만약 version이 다르다면, Offset에 저장된 값의 REDO_LOG 파일을 시작으로 현재 활성화된 REDO_LOG 파일까지 모든 로그를 조회해 Kafka로 발행한다.   
+   - 데이터 조회는 REDO_LOG 파일로 부터 읽은 데이터의 XIDUSN값과, XIDSLT값을 활용해 반드시 commit 된 트랜잭션 데이터만 조회를 진행한다.
 
 3. Data Transformer 서버가 Kafka에 발행된 로그의 ROW_ID값을 이용해 Oracle로부터 실제 데이터를 조회한다.
 4. 조회한 데이터와 필요한 정보를 MySQL이 적재 가능한 객체 형태로 담아 Kafka로 발행한다.(topic: payload)
@@ -205,26 +205,32 @@ CDC 방식을 **선택하게 된 이유**는 다음과 같다.
 
 ## 🔗 문제 해결 사례
 
+### [1. 트랜잭션 격리 수준을 고려하지 못한 Log 수집](https://github.com/DeepDamHwa/CDC_project/wiki/%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98-%EA%B2%A9%EB%A6%AC-%EC%88%98%EC%A4%80%EC%9D%84-%EA%B3%A0%EB%A0%A4%ED%95%9C-%EB%A1%9C%EA%B7%B8-%EC%88%98%EC%A7%91)
 
-
-### [문제 1]  
-[트랜잭션 수행 단위 내에서 commit 되지 않은 DML 도 redo 로그 파일에 기록되는 현상 발생](https://github.com/DeepDamHwa/CDC_project/wiki/%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98-%EA%B2%A9%EB%A6%AC-%EC%88%98%EC%A4%80%EC%9D%84-%EA%B3%A0%EB%A0%A4%ED%95%9C-%EB%A1%9C%EA%B7%B8-%EC%88%98%EC%A7%91)
+**[문제 1]**
+<br>Redo log를 분석하여 데이터를 수집하는 과정에서 트랜잭션 격리 수준을 고려하지 않아, 커밋되지 않은 데이터(테이블에 반영되지 않고 로그에만 존재하는 데이터)가 처리되어 데이터 정합성 문제가 발생함.
   
-### [개선]  
-Redo_Log 데이터의 XIDUSN값과, XIDSLT값을 활용해 commit 된 트랜잭션 데이터만 조회하도록 개선  
-  
-### [평가]
-커밋되지 않은 로그까지 동기화할 경우, 트랜잭션 단위에서 실패 시 롤백 대응이 불가능하다고 판단  
-Rollback 상황에 대한 대처와 일관성
-
+**[개선]**
+<br>edo log에서 트랜잭션을 구분할 수 있는 식별 값을 활용하여, 활성화된(아직 커밋되지 않은) 트랜잭션의 데이터를 제외하고 커밋된 데이터만 처리하도록 로직을 개선
   
 <br>
 
-### [문제 2]  
-[로그 파일 데이터가 가득차서 다음 로그 파일로 넘어가는 시점에서 일부 데이터가 누락되는 문제 발생](https://github.com/DeepDamHwa/CDC_project/wiki/Offset%EA%B3%BC-%EB%A1%9C%EA%B7%B8%ED%8C%8C%EC%9D%BC-%EA%B4%80%EB%A6%AC%EB%A5%BC-%ED%86%B5%ED%95%9C-%EB%A1%9C%EA%B7%B8-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%88%98%EC%A7%91-%EC%8B%9C%EC%9E%91-%EC%9C%84%EC%B9%98-%ED%99%95%EC%9D%B8)
+### [2. 로그 파일 번호를 고려허지 않은 Offset 관리로 인해 누락 데이터 발생](https://github.com/DeepDamHwa/CDC_project/wiki/Offset%EA%B3%BC-%EB%A1%9C%EA%B7%B8%ED%8C%8C%EC%9D%BC-%EA%B4%80%EB%A6%AC%EB%A5%BC-%ED%86%B5%ED%95%9C-%EB%A1%9C%EA%B7%B8-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%88%98%EC%A7%91-%EC%8B%9C%EC%9E%91-%EC%9C%84%EC%B9%98-%ED%99%95%EC%9D%B8)
 
-### [개선]   
-이전 Batch 작업에서 가용된 로그파일의 번호부터 현재 가용중인 로그파일의 번호 까지의 로그 파일을 조회하여 누락 데이터 방지
+**[문제]**
+<br>여러 개의 로그 파일을 처리헤야 할 때, 현재 Offset이 위치한 로그 파일만 처리되어 다른 로그 파일의 데이터가 누락되는 문제가 발생
 
-### [평가]  
-누락데이터 없이 이전 로그 파일부터 현 시점의 로그 파일까지의 데이터 모두 조회 및 전송하도록 개선  
+**[개선]**
+<br>파일 번호별 Offset을 추가하여 파일 단위로 관리하고, 이전 Batch 작업에서 처리한 파일부터 현재 파일까지의 로그를 모두 조회하는 로직으로 데이터 누락을 방지
+  
+<br>
+
+## 🔗 계획 - 추가 개선 사항
+
+### [이벤트 처리 실패로 인한 데이터 정합성 문제](https://github.com/DeepDamHwa/CDC_project/edit/main/README.md)
+
+**[에상 문제]**
+<br>kafka event 처리가 실패한 경우, 해당 데이터에 대헤 데이터에 반영되지 않아 데이터 정합성 발생
+
+**[예상 개선 사항]**
+<br>실패 이벤트를 별도의 토픽으로 발행하여, 로그에 기록한다.
