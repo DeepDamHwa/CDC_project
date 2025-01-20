@@ -18,18 +18,18 @@
 이 스터디는 실습을 통해 실무에서 적용할 수 있는 경험을 쌓는 것을 목표로 합니다. 
 <table align="center">
  <tr>
-    <td align="center"><a href="https://github.com/SihyunSeo"><img src="sources/시현_프로필.png" width="150px;" alt=""></td>
-    <td align="center"><a href="https://github.com/kangkings"><img src="sources/태성_프로필.png" width="150px;" alt=""></td>
-    <td align="center"><a href="https://github.com/706com"><img src="sources/동현_프로필.png" width="150px;" alt=""></td>
-    <td align="center"><a href="https://github.com/jimnyy"><img src="sources/지민_프로필.png" width="150px;" alt=""></td>
-    <td align="center"><a href="https://github.com/shinebyul"><img src="sources/별_프로필.png" width="150px;" alt=""></td>
+    <td align="center"><a href="https://github.com/kangkings"><img src="https://github.com/user-attachments/assets/87958dbd-8949-40ee-9d44-94b72a38220f" width="150px;" alt=""></td>
+    <td align="center"><a href="https://github.com/706com"><img src="https://github.com/user-attachments/assets/af86835f-63f8-470f-8a67-41d67b162a3d" width="150px;" alt=""></td>
+    <td align="center"><a href="https://github.com/jimnyy"><img src="https://github.com/user-attachments/assets/0525e556-b443-4e9c-bf02-fc1820eae111" width="150px;" alt=""></td>
+    <td align="center"><a href="https://github.com/shinebyul"><img src="https://github.com/user-attachments/assets/2e27dee2-7500-4ff1-ba30-62fe7b36de27" width="150px;" alt=""></td>
+     <td align="center"><a href="https://github.com/SihyunSeo"><img src="https://github.com/user-attachments/assets/b2fdab43-376c-476e-9e60-f240a04a9d4c" width="150px;" alt=""></td>
   </tr>
   <tr>
-    <td align="center"><a href="https://github.com/SihyunSeo"><b>서시현</b></td>
     <td align="center"><a href="https://github.com/kangkings"><b>강태성</b></td>
     <td align="center"><a href="https://github.com/706com"><b>곽동현</b></td>
     <td align="center"><a href="https://github.com/jimnyy"><b>도지민</b></td>
     <td align="center"><a href="https://github.com/shinebyul"><b>한별</b></td>
+    <td align="center"><a href="https://github.com/SihyunSeo"><b>서시현</b></td>
   </tr>
   </table>
 <br>
@@ -142,7 +142,7 @@ CDC 방식을 **선택하게 된 이유**는 다음과 같다.
 
 
 ## 🔗 프로젝트 설계
-<img src="sources/CDCarchitecture_3.png" style="width: 100%;"><br>
+<img src="https://github.com/user-attachments/assets/a3deb804-8540-464a-91d0-fc1613d1cc86" style="width: 100%;"><br>
 #### 시스템 프로세스
 1. 사용자에 의해 데이터 변동(삽입,삭제,수정)이 발생한다. (Spring Batch로 구현 - 5분마다 700개의 랜덤 DML생성)
 2. Log Scanner 서버가 OracleDB에 저장된 Offset 값을 읽어온다.
