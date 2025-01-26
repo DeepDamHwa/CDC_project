@@ -22,6 +22,12 @@ public class Role {
 
     private String name;
 
+    @Builder.Default
     @OneToMany(mappedBy = "role")
     private List<User> users = new ArrayList<>();
+
+    public Role(String[] logs){
+        this.idx = Long.parseLong(logs[0]);
+        this.name = logs[1];
+    }
 }

@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class PayloadLogProducer {
     private final KafkaTemplate<String,Object> kafkaTemplate;
-    public void sendNewPayloadLogCaptureMessage(NewPayloadData newPayloadData, String topic){
-        kafkaTemplate.send(topic, newPayloadData);
+    public void sendNewPayloadLogCaptureMessage(NewPayloadData newPayloadData){
+        kafkaTemplate.send("payload_log", newPayloadData);
         //"payload_log"
     }
     public void sendNewCommentsPayloadLogCaptureMessage(NewCommentsPayloadData newCommentsPayloadData, String topic){

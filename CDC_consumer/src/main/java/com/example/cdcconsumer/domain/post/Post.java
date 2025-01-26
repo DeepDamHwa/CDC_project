@@ -26,6 +26,12 @@ public class Post {
     @JoinColumn(name = "user_idx")
     private User user;
 
+    @Builder.Default
     @OneToMany(mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
+
+    public Post(String[] logs){
+        this.idx = Long.parseLong(logs[0]);
+        this.user = User.builder().idx(Long.parseLong(logs[1])).build();
+    }
 }

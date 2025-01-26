@@ -57,6 +57,16 @@ public class KafkaConfig {
         return factory;
     }
 
+    @Bean
+    public ConsumerFactory<String, Object> consumerFactory() {
+        return createConsumerFactory("payload_group");
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory() {
+        return createKafkaListenerContainerFactory(consumerFactory());
+    }
+
     // Comment Group
     @Bean
     public ConsumerFactory<String, Object> commentConsumerFactory() {

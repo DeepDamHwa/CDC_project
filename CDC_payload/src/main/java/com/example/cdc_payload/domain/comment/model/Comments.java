@@ -52,26 +52,27 @@ public class Comments{
     @JoinColumn(name = "parent_idx")
     private Comments parent;
 
-    public NewCommentsPayloadData toDto(String operation) {
-        return NewCommentsPayloadData.builder()
-                .operation(operation)
-                .commentsIdx(idx)
-//                .isMine(isMine)
-                .postIdx(post.getIdx())
-                .userIdx(user.getIdx())
-                .parentIdx(parent.getIdx())
-                .content(content)
-                .build();
-    }
-
-//    public NewCommentsPayloadData toDto(String opteration){
+//    public NewCommentsPayloadData toDto(String operation) {
 //        return NewCommentsPayloadData.builder()
-//                .operation(opteration)
+//                .operation(operation)
 //                .commentsIdx(idx)
-//                .isMine(isMine)
+////                .isMine(isMine)
 //                .postIdx(post.getIdx())
 //                .userIdx(user.getIdx())
 //                .parentIdx(parent.getIdx())
+//                .content(content)
+//                .build();
+//    }
+
+    public String logToString(){
+        return idx+","+content+","+post.getIdx()+","+user.getIdx()+","+parent.getIdx();
+    }
+
+//    public NewPayloadData toDto(String opteration){
+//        return NewPayloadData.builder()
+//                .operation(opteration)
+//                .tableName("comments")
+//                .log(logToString())
 //                .build();
 //    }
 }

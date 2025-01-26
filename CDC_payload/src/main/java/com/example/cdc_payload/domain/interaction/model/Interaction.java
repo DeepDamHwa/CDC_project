@@ -44,4 +44,8 @@ public class Interaction{
                 .emojiIdx(emoji.getIdx())
                 .build();
     }
+
+    public String logToString() {
+        return idx+","+COMMENTS.getIdx()+","+USERS.getIdx()+","+ emoji.getIdx();
+    }
 }

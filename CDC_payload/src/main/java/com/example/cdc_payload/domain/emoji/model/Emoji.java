@@ -29,6 +29,10 @@ public class Emoji{
     @OneToMany(mappedBy = "emoji")
     private List<Interaction> interactions;
 
+    public String logToString(){
+        return idx+","+name;
+    }
+
     public NewEmojiPayloadData toDto(String operation) {
         return NewEmojiPayloadData.builder()
                 .operation(operation)

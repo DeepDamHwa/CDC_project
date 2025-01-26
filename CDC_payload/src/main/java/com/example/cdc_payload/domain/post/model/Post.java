@@ -38,4 +38,8 @@ public class Post{
                 .userIdx(user.getIdx())
                 .build();
     }
+
+    public String logToString() {
+        return idx+","+user.getIdx();
+    }
 }

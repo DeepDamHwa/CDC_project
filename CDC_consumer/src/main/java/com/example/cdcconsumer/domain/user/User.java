@@ -25,16 +25,25 @@ public class User {
 
     private String name;
 
+    @Builder.Default
     @OneToMany(mappedBy = "user")
     private List<Post> posts = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "user")
     private List<Comment> comments = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "user")
     private List<Interaction> interactions = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "role_idx")
     private Role role;
+
+    public User(String[] logs){
+        this.idx = Long.parseLong(logs[0]);
+        this.name = logs[1];
+        this.role = Role.builder().idx(Long.parseLong(logs[2])).build();
+    }
 }

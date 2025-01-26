@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class NewUsersPayloadData extends NewPayloadData {
+public class NewUsersPayloadData{
     private String operation;
     private Long userIdx;
     private String name;

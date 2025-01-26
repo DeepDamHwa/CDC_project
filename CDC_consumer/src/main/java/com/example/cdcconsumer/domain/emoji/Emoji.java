@@ -23,4 +23,9 @@ public class Emoji {
 
     @OneToMany(mappedBy = "emoji")
     private List<Interaction> interactions;
+
+    public Emoji(String[] logs){
+        this.idx = Long.parseLong(logs[0]);
+        this.name = logs[1];
+    }
 }
