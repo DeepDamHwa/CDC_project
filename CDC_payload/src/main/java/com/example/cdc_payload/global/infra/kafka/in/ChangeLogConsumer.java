@@ -74,6 +74,8 @@ public class ChangeLogConsumer {
         // update log 는 값 다 가져와서 스트링으로 만들기
 
 
+
+
         String tableName = event.get("TABLE_NAME").toString();
         String operation = event.get("OPERATION").toString();
         String logToString = "";
