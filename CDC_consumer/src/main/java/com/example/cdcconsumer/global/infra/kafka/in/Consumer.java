@@ -18,6 +18,7 @@ import com.example.cdcconsumer.domain.role.repository.RoleRepository;
 import com.example.cdcconsumer.domain.user.NewUsersPayloadData;
 import com.example.cdcconsumer.domain.user.User;
 import com.example.cdcconsumer.domain.user.repository.UserRepository;
+import com.example.cdcconsumer.global.annotation.Timer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -34,6 +35,7 @@ public class Consumer {
     private final PostRepository postRepository;
     private final RoleRepository roleRepository;
 
+    @Timer
     @KafkaListener(topics = "payload_log", groupId = "payload_group", containerFactory = "kafkaListenerContainerFactory")
     public void consume(NewPayloadData newPayloadData) {
         String operation = newPayloadData.getOperation();
