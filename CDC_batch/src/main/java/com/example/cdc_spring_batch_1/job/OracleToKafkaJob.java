@@ -1,5 +1,6 @@
 package com.example.cdc_spring_batch_1.job;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class OracleToKafkaJob {
 
     @Bean
     public Step readLastWorkStep(JobRepository jobRepository,
-                             PlatformTransactionManager transactionManager) {
+                                 PlatformTransactionManager transactionManager) {
         return new StepBuilder("simpleStep1", jobRepository)
                 .tasklet(readLastWorkTasklet(), transactionManager)
                 .allowStartIfComplete(true)
@@ -55,7 +56,7 @@ public class OracleToKafkaJob {
             log.info(">>>>> Starting Read Last Work");
             String readSaveWorkSql = String.format(
                     """
-                    SELECT IDX, RS_ID, OPERATION, TABLE_NAME, REDO_VER
+                    SELECT IDX, RS_ID, OPERATION, TABLE_NAME, REDO_VER, TRANS_IDX
                     FROM save_work
                     WHERE idx = (SELECT MAX(idx) FROM save_work)
                     """
@@ -73,6 +74,7 @@ public class OracleToKafkaJob {
                     log.info("OPERATION: {}", lastWork.get("OPERATION"));
                     log.info("TABLE_NAME: {}", lastWork.get("TABLE_NAME"));
                     log.info("REDO_VER: {}", lastWork.get("REDO_VER"));
+                    log.info("TRANS_IDX: {}", lastWork.get("TRANS_IDX"));
 
                     // ExecutionContext에 저장하여 다음 단계에서 사용할 수 있도록 설정
                     chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext()
@@ -131,6 +133,23 @@ public class OracleToKafkaJob {
             log.info(String.valueOf(redoVersion));
             log.info("Using Last RS_ID: {}", lastRsId);
 
+            // ACTIVE TRANSACTION 부터 처리하기
+            // activeTransStepByStep method안에서 카프카까지 전송하는 로직 실행 후, active_trans 테이블에서 처리된 마지막 row의 idx값 반환
+            // 데이터 처리 로직을 메서드 안에서 다 처리하고 idx값만 반환한 이유는 추후 save_work에 저장해야 하기 때문
+
+            BigDecimal transIdx = (BigDecimal) lastWorkResults.get("TRANS_IDX");
+            Long activeTransLastIdx;
+            if (transIdx != null) {
+                activeTransLastIdx = activeTransStepByStep(transIdx.longValue());
+            } else {
+                System.out.println("TRANS_IDX is null!");
+                activeTransLastIdx = activeTransStepByStep(0L);
+            }
+
+            chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext()
+                    .put("activeTransLastIdx", activeTransLastIdx);
+
+
             List<Map<String, Object>> logContentsResults = new ArrayList<>();
 
             if(numberOfCurrentVersion == redoVersion){
@@ -153,24 +172,16 @@ public class OracleToKafkaJob {
                     for (Map<String, Object> row : stepByStep(currentRedoLogFile, lastRsId)) {
                         logContentsResults.add(row);
                     }
+                    if(numberOfCurrentVersion== redoVersion){
+                        log.info("로직 끝!");
+                        break;
+                    }
 
-
-//                    if(redoVersion.equals("REDO01.LOG")){
-//                        redoVersion = "REDO02.LOG";
-//                    } else if (redoVersion.equals("REDO02.LOG")){
-//                        redoVersion = "REDO03.LOG";
-//                    } else if(redoVersion.equals("REDO03.LOG")){
-//                        redoVersion = "REDO01.LOG";
-//                    }
                     redoVersion++;
                     if(redoVersion % 3 == 1){
                         redoVersion = 1;
                     }
 
-                    if(numberOfCurrentVersion + 1 == redoVersion){
-                        log.info("로직 끝!");
-                        break;
-                    }
 //                    lastIdext(".LOG");
 //                    redoVersion = Integer.toString(Integer.parseInt(redoVersion.substring(6, 7)));
 
@@ -196,10 +207,9 @@ public class OracleToKafkaJob {
                     .put("numberOfCurrentVersion", numberOfCurrentVersion);
 
             log.info(">>>>> Saved log contents to JobExecutionContext");
-
             log.info(">>>>> Finished Oracle LogMiner Operations");
 
-
+            log.info("총 처리된 로그 데이터 량 : " + logContentsResults.size());
             return RepeatStatus.FINISHED;
         });
     }
@@ -237,6 +247,7 @@ public class OracleToKafkaJob {
 //                jobExecutionContext.put("saveLastWorkResults", saveLastWorkResults);
             }
 
+            log.info("카프카로 보낸 총 데이터 량 : " + logContentsResults.size());
             log.info(">>>>> Finished Kafka Transmission");
             return RepeatStatus.FINISHED;
         });
@@ -258,6 +269,7 @@ public class OracleToKafkaJob {
             // JobExecutionContext에서 데이터 가져오기
             ExecutionContext jobExecutionContext = chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext();
             List<Map<String, Object>> logContentsResults = (List<Map<String, Object>>) jobExecutionContext.get("logContentsResults");
+            Long activeTransLastIdx = (Long) jobExecutionContext.get("activeTransLastIdx");
             int numberOfCurrentVersion = (int) jobExecutionContext.get("numberOfCurrentVersion");   // C:\APP\SIHYUN\PRODUCT\21C\ORADATA\XE\REDO02.LOG
 //            String currentVersion = currentRedoLogFile.substring(currentRedoLogFile.lastIndexOf("\\") + 1); // REDO02.LOG
 
@@ -266,7 +278,7 @@ public class OracleToKafkaJob {
                 log.info("Last Log Entry: {}", lastLogEntry);
                 log.info("CurrentRedo LogFile Entry: {}", numberOfCurrentVersion);
 
-                saveLogToDb(lastLogEntry, numberOfCurrentVersion); // DB에 저장
+                saveLogToDb(lastLogEntry, numberOfCurrentVersion, activeTransLastIdx); // DB에 저장
             } else {
                 log.warn("No log contents available to save.");
             }
@@ -276,16 +288,17 @@ public class OracleToKafkaJob {
         };
     }
 
-    private void saveLogToDb(Map<String, Object> lastLogEntry, int numberOfCurrentVersion) {
+    private void saveLogToDb(Map<String, Object> lastLogEntry, int numberOfCurrentVersion, Long activeTransLastIdx) {
 
         //TODO : 실패에 대한 예외처리
-        String insertSql = "INSERT INTO SAVE_WORK (RS_ID, OPERATION, TABLE_NAME, REDO_VER) VALUES (?, ?, ?, ?)";
+        String insertSql = "INSERT INTO SAVE_WORK (RS_ID, OPERATION, TABLE_NAME, REDO_VER, TRANS_IDX) VALUES (?, ?, ?, ?, ?)";
 
         jdbcTemplate.update(insertSql,
                 lastLogEntry.get("RS_ID"),
                 lastLogEntry.get("OPERATION"),
                 lastLogEntry.get("TABLE_NAME"),
-                numberOfCurrentVersion);
+                numberOfCurrentVersion,
+                activeTransLastIdx);
 
         log.info("Successfully saved last work log into SAVE_WORK table.");
     }
@@ -325,6 +338,28 @@ public class OracleToKafkaJob {
 //                    "AND (XIDUSN, XIDSLT) NOT IN (SELECT XIDUSN, XIDSLOT FROM V$TRANSACTION WHERE STATUS = 'ACTIVE')", lastRsId);
 //            List<Map<String, Object>> logContentsResults = jdbcTemplate.queryForList(selectLogContentsSql);
 
+        // 진행중인 트랜잭션이 있는지 조회
+        String selectActiveTransactionSql = "SELECT ROW_ID, RS_ID, OPERATION, SEG_OWNER, TABLE_NAME, XIDUSN, XIDSLT, SQL_REDO " +
+                "FROM V$LOGMNR_CONTENTS " +
+                "WHERE TABLE_NAME IN ('USERS', 'COMMENTS', 'EMOJI', 'INTERACTION', 'POST', 'ROLE') " +
+                "AND TRIM(RS_ID) > '" + lastRsId + "' " +
+                "AND (XIDUSN, XIDSLT) IN (SELECT XIDUSN, XIDSLOT FROM V$TRANSACTION WHERE STATUS = 'ACTIVE')";
+
+        List<Map<String, Object>> activeTransactionResults = jdbcTemplate.queryForList(selectActiveTransactionSql);
+
+        // 만약 진행중인 트랜잭션이 존재하면, 해당 트랜잭션 정보 저장
+        if(!activeTransactionResults.isEmpty()) {
+            for(Map<String, Object> row : activeTransactionResults) {
+                String numberOfRedoLogFile = currentRedoLogFile.substring(currentRedoLogFile.length() - 5, currentRedoLogFile.length() - 4);
+                String insertSql = "INSERT INTO ACTIVE_TRANS (IDX, XIDUSN, XIDSLT, REDO_VER) VALUES (NULL, ?, ?, ?)";
+
+                jdbcTemplate.update(insertSql,
+                        row.get("XIDUSN"),
+                        row.get("XIDSLT"),
+                        numberOfRedoLogFile);
+            }
+        }
+
         String selectLogContentsSql = "SELECT ROW_ID, RS_ID, OPERATION, SEG_OWNER, TABLE_NAME, XIDUSN, XIDSLT, SQL_REDO " +
                 "FROM V$LOGMNR_CONTENTS " +
                 "WHERE TABLE_NAME IN ('USERS', 'COMMENTS', 'EMOJI', 'INTERACTION', 'POST', 'ROLE') " +
@@ -343,4 +378,82 @@ public class OracleToKafkaJob {
         return logContentsResults;
     }
 
+    public Long activeTransStepByStep(Long transIdx) {
+        String readActiveTransSql;
+        if (transIdx == 0L) {
+            readActiveTransSql = "SELECT IDX, XIDUSN, XIDSLT, REDO_VER " +
+                    "FROM ( " +
+                    "    SELECT IDX, XIDUSN, XIDSLT, REDO_VER, " +
+                    "           ROW_NUMBER() OVER (PARTITION BY XIDUSN, XIDSLT, REDO_VER ORDER BY IDX DESC) as rn " +
+                    "    FROM active_trans " +
+                    ") subquery " +
+                    "WHERE rn = 1 " +
+                    "ORDER BY IDX";
+        } else {
+            readActiveTransSql = "SELECT IDX, XIDUSN, XIDSLT, REDO_VER " +
+                    "FROM ( " +
+                    "    SELECT IDX, XIDUSN, XIDSLT, REDO_VER, " +
+                    "           ROW_NUMBER() OVER (PARTITION BY XIDUSN, XIDSLT, REDO_VER ORDER BY IDX DESC) as rn " +
+                    "    FROM active_trans " +
+                    "    WHERE IDX > " + transIdx + " " +
+                    ") subquery " +
+                    "WHERE rn = 1 " +
+                    "ORDER BY IDX";
+        }
+
+        List<Map<String, Object>> activeTransactionResults = jdbcTemplate.queryForList(readActiveTransSql);
+
+        long lastIdx = 0L;
+
+        if (!activeTransactionResults.isEmpty()) {
+            for (Map<String, Object> result : activeTransactionResults) {
+                long idx = ((BigDecimal) result.get("IDX")).longValue();
+
+                if (idx > lastIdx) {
+                    lastIdx = idx;
+                }
+            }
+        }
+
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  " + transIdx);
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  " + lastIdx);
+
+        String prefix = "C:\\APP\\SIHYUN\\PRODUCT\\21C\\ORADATA\\XE\\REDO0";
+        String suffix = ".LOG";
+
+        List<Map<String, Object>> logContentsResults = new ArrayList<>();
+
+        for(Map<String, Object> row : activeTransactionResults) {
+            // Step 1: DBMS_LOGMNR.ADD_LOGFILE 실행
+            String addLogFileSql = String.format(
+                    "BEGIN DBMS_LOGMNR.ADD_LOGFILE(" +
+                            "LOGFILENAME => '%s', " +
+                            "OPTIONS => DBMS_LOGMNR.NEW); END;", prefix + row.get("REDO_VER") + suffix
+            );
+            jdbcTemplate.execute(addLogFileSql);
+
+            // Step 2: DBMS_LOGMNR.START_LOGMNR 실행
+            String startLogMinerSql = "BEGIN DBMS_LOGMNR.START_LOGMNR(" +
+                    "OPTIONS => DBMS_LOGMNR.DICT_FROM_ONLINE_CATALOG); END;";
+            jdbcTemplate.execute(startLogMinerSql);
+
+            String selectLogContentsSql = "SELECT ROW_ID, RS_ID, OPERATION, SEG_OWNER, TABLE_NAME, XIDUSN, XIDSLT, SQL_REDO " +
+                    "FROM V$LOGMNR_CONTENTS " +
+                    "WHERE TABLE_NAME IN ('USERS', 'COMMENTS', 'EMOJI', 'INTERACTION', 'POST', 'ROLE') " +
+                    "AND XIDUSN = " + row.get("XIDUSN") + " AND XIDSLT = " + row.get("XIDSLT");
+
+            logContentsResults = jdbcTemplate.queryForList(selectLogContentsSql);
+        }
+
+        for (Map<String, Object> row : logContentsResults) {
+            kafkaTemplate.send(KAFKA_TOPIC, (String) row.get("ROW_ID"), row);
+            log.info("Sent log entry from active Transaction to Kafka: {}", row);
+//                    saveLastWorkResults.add(row);
+        }
+        log.info("카프카로 보낸 총 데이터 량 : " + logContentsResults.size());
+        log.info(">>>>> Finished Kafka Transmission");
+
+
+        return lastIdx;
+    }
 }
