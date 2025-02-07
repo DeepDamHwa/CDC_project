@@ -1,6 +1,7 @@
 package com.example.cdc_payload.domain.interaction.repository;
 
 import com.example.cdc_payload.domain.interaction.model.Interaction;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,5 +19,5 @@ public interface InteractionRepository extends JpaRepository<Interaction, Long> 
 //    Interaction findByRowId(@Param("rowid") String rowid);
 
     @Query(value = "SELECT * FROM interaction WHERE \"ROWID\" = :rowid", nativeQuery = true)
-    Interaction findByRowId(@Param("rowid") String rowid);
+    Optional<Interaction> findByRowId(@Param("rowid") String rowid);
 }

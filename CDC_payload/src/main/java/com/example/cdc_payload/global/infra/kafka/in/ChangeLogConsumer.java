@@ -23,6 +23,7 @@ import com.example.cdc_payload.global.infra.kafka.out.NewPayloadData;
 import com.example.cdc_payload.global.infra.kafka.out.PayloadLogProducer;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -41,7 +42,7 @@ public class ChangeLogConsumer {
     private final PayloadLogProducer payloadLogProducer;
 
     @KafkaListener(topics = "change_data_log", groupId = "change_log_group")
-    public void newCaptureEvent(Map<String, Object> event){
+    public void newCaptureEvent(Map<String, Object> event) {
 
 //       {RS_ID=AAATNPAAHAAAALkAEy,
 //        OPERATION=INSERT,
@@ -58,13 +59,11 @@ public class ChangeLogConsumer {
 //        XIDSLT=30,
 //        SQL_REDO=insert into "C##DEEP"."INTERACTION"("IDX","COMMENT_IDX","EMOJI_IDX","USER_IDX") values ('43489','75','185','5');}
 
-
-
         String tableName = event.get("TABLE_NAME").toString();
         String operation = event.get("OPERATION").toString();
         log.info(">>> 이벤트 수신 ...");
-        log.info(">>> TABLE_NAME : "+tableName);
-        log.info(">>> OPERATION : "+operation);
+        log.info(">>> TABLE_NAME : " + tableName);
+        log.info(">>> OPERATION : " + operation);
 
         if(tableName.equals("COMMENTS")){
             String topic = "comment_payload_log";
@@ -77,8 +76,11 @@ public class ChangeLogConsumer {
                                 .build(),
                         topic);
             }else{
-                Comments comments = commentsRepository.findByRowId(event.get("ROW_ID").toString());
-                payloadLogProducer.sendNewCommentsPayloadLogCaptureMessage(comments.toDto(operation), topic);
+                Optional<Comments> optional = commentsRepository.findByRowId(event.get("ROW_ID").toString());
+                if(optional.isPresent()){
+                    Comments comments = optional.get();
+                    payloadLogProducer.sendNewCommentsPayloadLogCaptureMessage(comments.toDto(operation), topic);
+                }
             }
 //            Comments comments = commentsRepository.findByRowId( event.get("ROW_ID").toString());
 //            payloadLogProducer.sendNewCommentsPayloadLogCaptureMessage(comments.toDto(event.get("OPERATION").toString()), "comment_payload_log");
@@ -93,14 +95,18 @@ public class ChangeLogConsumer {
                                 .build(),
                         topic);
             }else{
-                Emoji emoji = emojiRepository.findByRowId(event.get("ROW_ID").toString());
-                payloadLogProducer.sendNewEmojiPayloadLogCaptureMessage(emoji.toDto(operation), topic);
+                Optional<Emoji> optional = emojiRepository.findByRowId(event.get("ROW_ID").toString());
+                if(optional.isPresent()) {
+                    Emoji emoji = optional.get();
+                    payloadLogProducer.sendNewEmojiPayloadLogCaptureMessage(emoji.toDto(operation), topic);
+                }
             }
 //            Emoji emoji = emojiRepository.findByRowId( event.get("ROW_ID").toString());
 //            payloadLogProducer.sendNewEmojiPayloadLogCaptureMessage(emoji.toDto(event.get("OPERATION").toString()), "emoji_payload_log");
-        }else if(tableName.equals("INTERACTION")){
+        }
+        if (tableName.equals("INTERACTION")) {
             String topic = "interaction_payload_log";
-            if(operation.equals("DELETE")){
+            if (operation.equals("DELETE")) {
                 Long idx = Long.parseLong(event.get("SQL_REDO").toString().split("'")[1]);
                 payloadLogProducer.sendNewInteractionPayloadLogCaptureMessage(
                         NewInteractionPayloadData.builder()
@@ -108,9 +114,12 @@ public class ChangeLogConsumer {
                                 .interactionIdx(idx)
                                 .build(),
                         topic);
-            }else{
-                Interaction interaction = interactionRepository.findByRowId(event.get("ROW_ID").toString());
-                payloadLogProducer.sendNewInteractionPayloadLogCaptureMessage(interaction.toDto(operation), topic);
+            } else {
+                Optional<Interaction> optional = interactionRepository.findByRowId(event.get("ROW_ID").toString());
+                if(optional.isPresent()) {
+                    Interaction interaction = optional.get();
+                    payloadLogProducer.sendNewInteractionPayloadLogCaptureMessage(interaction.toDto(operation), topic);
+                }
             }
 //            if(event.get("OPERATION").toString().equals("UPDATE")){
 //                interaction = interactionRepository.findByRowId( event.get("ROW_ID").toString());
@@ -127,7 +136,8 @@ public class ChangeLogConsumer {
 //            Interaction interaction = interactionRepository.findByRowId( event.get("ROW_ID").toString());
 //            System.out.println(event.get("ROW_ID").toString());
 //            payloadLogProducer.sendNewInteractionPayloadLogCaptureMessage(interaction.toDto(event.get("OPERATION").toString()), "interaction_payload_log");
-        }else if(tableName.equals("POST")){
+        }
+        else if(tableName.equals("POST")){
             String topic = "post_payload_log";
             if(operation.equals("DELETE")){
                 Long idx = Long.parseLong(event.get("SQL_REDO").toString().split("'")[1]);
@@ -138,12 +148,14 @@ public class ChangeLogConsumer {
                                 .build(),
                         topic);
             }else{
-                Post post = postRepository.findByRowId(event.get("ROW_ID").toString());
-                payloadLogProducer.sendNewPostPayloadLogCaptureMessage(post.toDto(operation), topic);
+                Optional<Post> optional = postRepository.findByRowId(event.get("ROW_ID").toString());
+                if(optional.isPresent()){
+                    Post post = optional.get();
+                    payloadLogProducer.sendNewPostPayloadLogCaptureMessage(post.toDto(operation), topic);
+                }
             }
-//            Post post = postRepository.findByRowId( event.get("ROW_ID").toString());
-//            payloadLogProducer.sendNewPostPayloadLogCaptureMessage(post.toDto(event.get("OPERATION").toString()), "post_payload_log");
-        }else if(tableName.equals("ROLE")){
+        }
+        else if(tableName.equals("ROLE")){
             String topic = "role_payload_log";
             if(operation.equals("DELETE")){
                 Long idx = Long.parseLong(event.get("SQL_REDO").toString().split("'")[1]);
@@ -154,12 +166,15 @@ public class ChangeLogConsumer {
                                 .build(),
                         topic);
             }else{
-                Role role = roleRepository.findByRowId(event.get("ROW_ID").toString());
-                payloadLogProducer.sendNewRolePayloadLogCaptureMessage(role.toDto(operation), topic);
+                Optional<Role> optional = roleRepository.findByRowId(event.get("ROW_ID").toString());
+                if(optional.isPresent()){
+                    Role role = optional.get();
+                    payloadLogProducer.sendNewRolePayloadLogCaptureMessage(role.toDto(operation), topic);
+                }
             }
 //            Role role = roleRepository.findByRowId( event.get("ROW_ID").toString());
 //            payloadLogProducer.sendNewRolePayloadLogCaptureMessage(role.toDto(event.get("OPERATION").toString()), "role_payload_log");
-        }else if(tableName.equals("USER")){
+        }else if(tableName.equals("USERS")){
             String topic = "user_payload_log";
             if(operation.equals("DELETE")){
                 Long idx = Long.parseLong(event.get("SQL_REDO").toString().split("'")[1]);
@@ -170,8 +185,11 @@ public class ChangeLogConsumer {
                                 .build(),
                         topic);
             }else{
-                Users user = userRepository.findByRowId(event.get("ROW_ID").toString());
-                payloadLogProducer.sendNewUserPayloadLogCaptureMessage(user.toDto(operation), topic);
+                Optional<Users> optional = userRepository.findByRowId(event.get("ROW_ID").toString());
+                if(optional.isPresent()) {
+                    Users user = optional.get();
+                    payloadLogProducer.sendNewUserPayloadLogCaptureMessage(user.toDto(operation), topic);
+                }
             }
 //            Users user = userRepository.findByRowId( event.get("ROW_ID").toString());
 //            payloadLogProducer.sendNewUserPayloadLogCaptureMessage(user.toDto(event.get("OPERATION").toString()), "user_payload_log");
@@ -180,18 +198,18 @@ public class ChangeLogConsumer {
 
     }
 
-    private void produceEvent(Map<String, Object> event, EventEntity entity, String topic){
-        try {
-
-            payloadLogProducer.sendNewPayloadLogCaptureMessage(entity.toDto(event.get("OPERATION").toString()), topic);
-
-        } catch (Exception e) {
-            // 예외 처리 및 로그 출력
-            System.err.println("이벤트 처리 중 오류 발생: " + e.getMessage());
-            System.out.println(event.get("ROW_ID"));
-            e.printStackTrace();
-        }
-    }
+//    private void produceEvent(Map<String, Object> event, EventEntity entity, String topic){
+//        try {
+//
+//            payloadLogProducer.sendNewPayloadLogCaptureMessage(entity.toDto(event.get("OPERATION").toString()), topic);
+//
+//        } catch (Exception e) {
+//            // 예외 처리 및 로그 출력
+//            System.err.println("이벤트 처리 중 오류 발생: " + e.getMessage());
+//            System.out.println(event.get("ROW_ID"));
+//            e.printStackTrace();
+//        }
+//    }
 
 //    private void produceInteractionEvent(Map<String, Object> event){
 //        Interaction interaction = null;
@@ -214,6 +232,7 @@ public class ChangeLogConsumer {
 //            System.out.println(interaction.getIdx());
 //            e.printStackTrace();
 //        }
+//    }
 //    }
 }
 
