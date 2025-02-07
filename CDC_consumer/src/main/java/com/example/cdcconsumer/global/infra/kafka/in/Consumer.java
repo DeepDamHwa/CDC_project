@@ -21,6 +21,8 @@ import com.example.cdcconsumer.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
@@ -32,13 +34,17 @@ public class Consumer {
     private final PostRepository postRepository;
     private final RoleRepository roleRepository;
 
-    @KafkaListener(topics = "comment_payload_topic", groupId = "comment_payload_group", containerFactory = "commentKafkaListenerContainerFactory")
+//    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @KafkaListener(topics = "comment_payload_log", groupId = "comment_payload_group", containerFactory = "commentKafkaListenerContainerFactory")
     public void consumeComment(NewCommentsPayloadData newCommentsPayloadData) {
         System.out.println("이벤트 수신...");
         String operation = newCommentsPayloadData.getOperation();
         try {
+            System.out.println("Comment");
             System.out.println(operation);
+            System.out.println(newCommentsPayloadData.getCommentsIdx());
             if (operation.equals("DELETE")) {
+//                Comment comment = commentRepository.findById(newCommentsPayloadData.getCommentsIdx()).orElseThrow();
                 commentRepository.deleteById(newCommentsPayloadData.getCommentsIdx());
             } else {
                 Comment comment = Comment.builder()
@@ -57,13 +63,17 @@ public class Consumer {
 
     }
 
+//    @Transactional(isolation = Isolation.SERIALIZABLE)
     @KafkaListener(topics = "user_payload_log", groupId = "user_payload_group", containerFactory = "userKafkaListenerContainerFactory")
     public void consumeUser(NewUsersPayloadData newUsersPayloadData) {
         System.out.println("이벤트 수신...");
         String operation = newUsersPayloadData.getOperation();
         try {
+            System.out.println("User");
             System.out.println(operation);
+            System.out.println(newUsersPayloadData.getUserIdx());
             if (operation.equals("DELETE")) {
+//                User user = userRepository.findById(newUsersPayloadData.getUserIdx()).orElseThrow();
                 userRepository.deleteById(newUsersPayloadData.getUserIdx());
             } else {
                 User user = User.builder()
@@ -79,14 +89,18 @@ public class Consumer {
         }
     }
 
+//    @Transactional(isolation = Isolation.SERIALIZABLE)
     @KafkaListener(topics = "emoji_payload_log", groupId = "emoji_payload_group", containerFactory = "emojiKafkaListenerContainerFactory")
     public void consumeEmoji(NewEmojiPayloadData newEmojiPayloadData) {
         System.out.println("이벤트 수신...");
         String operation = newEmojiPayloadData.getOperation();
 
         try {
+            System.out.println("Emoji");
             System.out.println(operation);
+            System.out.println(newEmojiPayloadData.getEmojiIdx());
             if (operation.equals("DELETE")) {
+//                Emoji emoji = emojiRepository.findById(newEmojiPayloadData.getEmojiIdx()).orElseThrow();
                 emojiRepository.deleteById(newEmojiPayloadData.getEmojiIdx());
             } else {
                 Emoji emoji = Emoji.builder()
@@ -101,13 +115,17 @@ public class Consumer {
         }
     }
 
+//    @Transactional(isolation = Isolation.SERIALIZABLE)
     @KafkaListener(topics = "role_payload_log", groupId = "role_payload_group", containerFactory = "roleKafkaListenerContainerFactory")
     public void consumeRole(NewRolePayloadData newRolePayloadData) {
         System.out.println("이벤트 수신...");
         String operation = newRolePayloadData.getOperation();
         try {
+            System.out.println("Role");
             System.out.println(operation);
+            System.out.println(newRolePayloadData.getRoleIdx());
             if (operation.equals("DELETE")) {
+//                Role role = roleRepository.findById(newRolePayloadData.getRoleIdx()).orElseThrow();
                 roleRepository.deleteById(newRolePayloadData.getRoleIdx());
             } else {
                 Role role = Role.builder().
@@ -122,14 +140,18 @@ public class Consumer {
         }
     }
 
+//    @Transactional(isolation = Isolation.SERIALIZABLE)
     @KafkaListener(topics = "interaction_payload_log", groupId = "interaction_payload_group", containerFactory = "interactionKafkaListenerContainerFactory")
     public void consumeInteraction(NewInteractionPayloadData newInteractionPayloadData) {
         System.out.println("이벤트 수신...");
         String operation = newInteractionPayloadData.getOperation();
 
         try {
+            System.out.println("Interation");
             System.out.println(operation);
+            System.out.println(newInteractionPayloadData.getInteractionIdx());
             if (operation.equals("DELETE")) {
+//                Interaction interaction = interactionRepository.findById(newInteractionPayloadData.getInteractionIdx()).orElseThrow();
                 interactionRepository.deleteById(newInteractionPayloadData.getInteractionIdx());
             } else {
                 Interaction interaction = Interaction.builder()
@@ -145,14 +167,18 @@ public class Consumer {
         }
     }
 
+//    @Transactional(isolation = Isolation.SERIALIZABLE)
     @KafkaListener(topics = "post_payload_log", groupId = "post_payload_group", containerFactory = "postKafkaListenerContainerFactory")
     public void consumePost(NewPostPayloadData newPostPayloadData) {
         System.out.println("이벤트 수신...");
         String operation = newPostPayloadData.getOperation();
 
         try {
+            System.out.println("Post");
             System.out.println(operation);
+            System.out.println(newPostPayloadData.getPostIdx());
             if (operation.equals("DELETE")) {
+//                Post post = postRepository.findById(newPostPayloadData.getPostIdx()).orElseThrow();
                 postRepository.deleteById(newPostPayloadData.getPostIdx());
             } else {
                 Post post = Post.builder()
