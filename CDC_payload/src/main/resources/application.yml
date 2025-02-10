@@ -14,13 +14,13 @@ spring:
       hibernate:
         format_sql: true
         auto_quote_keyword: true
-
-  logging:
-    level:
-      org:
-        hibernate:
-          SQL: DEBUG
-          type:
-            descriptor:
-              sql:
-                BasicBinder: TRACE
+#
+#  logging:
+#    level:
+#      org:
+#        hibernate:
+#          SQL: DEBUG
+#          type:
+#            descriptor:
+#              sql:
+#                BasicBinder: TRACE

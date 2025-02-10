@@ -42,7 +42,7 @@ public class TestController {
     }
     @GetMapping("/test")
     public ResponseEntity<String> test(){
-        Interaction interaction = interactionRepository.findByRowId("AAATNPAAHAAAALkAFM");
+//        Interaction interaction = interactionRepository.findByRowId("AAATNPAAHAAAALkAFM");
 //        return ResponseEntity.ok(interaction.getUser().getName());
         return ResponseEntity.ok("ff");
     }

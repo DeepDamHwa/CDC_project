@@ -80,6 +80,8 @@ public class ChangeLogConsumer {
                 if(optional.isPresent()){
                     Comments comments = optional.get();
                     payloadLogProducer.sendNewCommentsPayloadLogCaptureMessage(comments.toDto(operation), topic);
+                }else{
+                    log.info("존재하지 않는 row : "+event.get("ROW_ID").toString());
                 }
             }
 //            Comments comments = commentsRepository.findByRowId( event.get("ROW_ID").toString());
@@ -99,6 +101,8 @@ public class ChangeLogConsumer {
                 if(optional.isPresent()) {
                     Emoji emoji = optional.get();
                     payloadLogProducer.sendNewEmojiPayloadLogCaptureMessage(emoji.toDto(operation), topic);
+                }else{
+                    log.info("존재하지 않는 row : "+event.get("ROW_ID").toString());
                 }
             }
 //            Emoji emoji = emojiRepository.findByRowId( event.get("ROW_ID").toString());
@@ -119,6 +123,8 @@ public class ChangeLogConsumer {
                 if(optional.isPresent()) {
                     Interaction interaction = optional.get();
                     payloadLogProducer.sendNewInteractionPayloadLogCaptureMessage(interaction.toDto(operation), topic);
+                }else{
+                    log.info("존재하지 않는 row : "+event.get("ROW_ID").toString());
                 }
             }
 //            if(event.get("OPERATION").toString().equals("UPDATE")){
@@ -152,6 +158,8 @@ public class ChangeLogConsumer {
                 if(optional.isPresent()){
                     Post post = optional.get();
                     payloadLogProducer.sendNewPostPayloadLogCaptureMessage(post.toDto(operation), topic);
+                }else{
+                    log.info("존재하지 않는 row : "+event.get("ROW_ID").toString());
                 }
             }
         }
@@ -170,6 +178,8 @@ public class ChangeLogConsumer {
                 if(optional.isPresent()){
                     Role role = optional.get();
                     payloadLogProducer.sendNewRolePayloadLogCaptureMessage(role.toDto(operation), topic);
+                }else{
+                    log.info("존재하지 않는 row : "+event.get("ROW_ID").toString());
                 }
             }
 //            Role role = roleRepository.findByRowId( event.get("ROW_ID").toString());
@@ -189,6 +199,8 @@ public class ChangeLogConsumer {
                 if(optional.isPresent()) {
                     Users user = optional.get();
                     payloadLogProducer.sendNewUserPayloadLogCaptureMessage(user.toDto(operation), topic);
+                }else{
+                    log.info("존재하지 않는 row : "+event.get("ROW_ID").toString());
                 }
             }
 //            Users user = userRepository.findByRowId( event.get("ROW_ID").toString());
