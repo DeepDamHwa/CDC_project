@@ -18,6 +18,7 @@ import com.example.cdcconsumer.domain.role.repository.RoleRepository;
 import com.example.cdcconsumer.domain.user.NewUsersPayloadData;
 import com.example.cdcconsumer.domain.user.User;
 import com.example.cdcconsumer.domain.user.repository.UserRepository;
+import com.example.cdcconsumer.global.infra.kafka.out.DataProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -33,6 +34,7 @@ public class Consumer {
     private final EmojiRepository emojiRepository;
     private final PostRepository postRepository;
     private final RoleRepository roleRepository;
+    private final DataProducer dataProducer;
 
 //    @Transactional(isolation = Isolation.SERIALIZABLE)
     @KafkaListener(topics = "comment_payload_log", groupId = "comment_payload_group", containerFactory = "commentKafkaListenerContainerFactory")
@@ -59,6 +61,8 @@ public class Consumer {
         } catch (Exception e) {
             System.out.println("예외 발생");
             e.printStackTrace();
+            //실패시 Dead Letter에 메시지 발행
+            dataProducer.sendCommentDeadLetter(newCommentsPayloadData);
         }
 
     }
@@ -86,6 +90,7 @@ public class Consumer {
         } catch (Exception e) {
             System.out.println("예외 발생");
             e.printStackTrace();
+            dataProducer.sendUserDeadLetter(newUsersPayloadData);
         }
     }
 
@@ -112,6 +117,7 @@ public class Consumer {
         } catch (Exception e) {
             System.out.println("예외 발생");
             e.printStackTrace();
+            dataProducer.sendEmojiDeadLetter(newEmojiPayloadData);
         }
     }
 
@@ -137,6 +143,7 @@ public class Consumer {
         } catch (Exception e) {
             System.out.println("예외 발생");
             e.printStackTrace();
+            dataProducer.sendRoleDeadLetter(newRolePayloadData);
         }
     }
 
@@ -164,6 +171,7 @@ public class Consumer {
         } catch (Exception e) {
             System.out.println("예외 발생");
             e.printStackTrace();
+            dataProducer.sendInteractionDeadLetter(newInteractionPayloadData);
         }
     }
 
@@ -190,6 +198,7 @@ public class Consumer {
         } catch (Exception e) {
             System.out.println("예외 발생");
             e.printStackTrace();
+            dataProducer.sendPostDeadLetter(newPostPayloadData);
         }
     }
 }
