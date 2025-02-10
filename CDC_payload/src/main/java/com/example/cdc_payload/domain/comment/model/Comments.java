@@ -28,7 +28,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "COMMENTS")
 public class Comments{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
 
     private String content;

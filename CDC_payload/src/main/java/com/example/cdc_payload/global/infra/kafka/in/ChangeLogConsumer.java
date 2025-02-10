@@ -88,7 +88,7 @@ public class ChangeLogConsumer {
             logToString = event.get("SQL_REDO").toString().split("'")[1];
         }else if(operation.equals("INSERT")){
             logToString = event.get("SQL_REDO").toString().split("values \\(")[1]; //'43690','10','6','8');
-            logToString.replace("'","").replace(")","").replace(";","");
+            logToString = logToString.replace("'","").replace(")","").replace(";","");
         }else{
             if(tableName.equals("COMMENTS")){
                 Comments comments = commentsRepository.findByRowId(event.get("ROW_ID").toString());
@@ -105,7 +105,7 @@ public class ChangeLogConsumer {
             }else if(tableName.equals("ROLE")){
                 Role role = roleRepository.findByRowId(event.get("ROW_ID").toString());
                 logToString = role.logToString();
-            }else if(tableName.equals("USER")){
+            }else if(tableName.equals("USERS")){
                 Users users = userRepository.findByRowId(event.get("ROW_ID").toString());
                 logToString = users.logToString();
             }
