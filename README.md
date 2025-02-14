@@ -160,8 +160,8 @@ CDC 방식을 **선택하게 된 이유**는 다음과 같다.
 <br>
 
 #### 시스템 설계
-- [Kafka 사용 이유]()
-- [왜 Spring Batch 사용 이유]()
+- [Kafka 사용 이유](https://github.com/DeepDamHwa/CDC_project/wiki/%EC%99%9C-Kafka%EC%9D%B8%EA%B0%80%3F)
+- [왜 Spring Batch 사용 이유](https://github.com/DeepDamHwa/CDC_project/wiki/%EC%99%9C-Spring-Batch-%EC%9D%B8%EA%B0%80%3F)
 
 
 <br><br><br>
