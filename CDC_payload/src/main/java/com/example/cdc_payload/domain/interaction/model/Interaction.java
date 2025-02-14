@@ -46,6 +46,6 @@ public class Interaction{
     }
 
     public String logToString() {
-        return idx+","+COMMENTS.getIdx()+","+USERS.getIdx()+","+ emoji.getIdx();
+        return idx+","+COMMENTS.getIdx()+","+USERS.getIdx()+","+emoji.getIdx();
     }
 }
