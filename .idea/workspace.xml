@@ -28,7 +28,6 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "payload",
     "last_opened_file_path": "/Users/hanbyeol/Desktop/딥담화/CDC_project",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -43,6 +42,21 @@
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/CDC_payload/src/main" />
     </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="CDC_project" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="CDC_project" />
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -185,6 +199,7 @@
     <MESSAGE value="리드미 수정" />
     <MESSAGE value="이미지 수정" />
     <MESSAGE value="이미지 삭제" />
-    <option name="LAST_COMMIT_MESSAGE" value="이미지 삭제" />
+    <MESSAGE value="consumer 로직 변경" />
+    <option name="LAST_COMMIT_MESSAGE" value="consumer 로직 변경" />
   </component>
 </project>

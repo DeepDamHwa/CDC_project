@@ -36,7 +36,6 @@ public class Consumer {
     private final RoleRepository roleRepository;
     private final DataProducer dataProducer;
 
-//    @Transactional(isolation = Isolation.SERIALIZABLE)
     @KafkaListener(topics = "comment_payload_log", groupId = "comment_payload_group", containerFactory = "commentKafkaListenerContainerFactory")
     public void consumeComment(NewCommentsPayloadData newCommentsPayloadData) {
         System.out.println("이벤트 수신...");
@@ -67,7 +66,6 @@ public class Consumer {
 
     }
 
-//    @Transactional(isolation = Isolation.SERIALIZABLE)
     @KafkaListener(topics = "user_payload_log", groupId = "user_payload_group", containerFactory = "userKafkaListenerContainerFactory")
     public void consumeUser(NewUsersPayloadData newUsersPayloadData) {
         System.out.println("이벤트 수신...");
@@ -94,7 +92,6 @@ public class Consumer {
         }
     }
 
-//    @Transactional(isolation = Isolation.SERIALIZABLE)
     @KafkaListener(topics = "emoji_payload_log", groupId = "emoji_payload_group", containerFactory = "emojiKafkaListenerContainerFactory")
     public void consumeEmoji(NewEmojiPayloadData newEmojiPayloadData) {
         System.out.println("이벤트 수신...");
@@ -105,7 +102,6 @@ public class Consumer {
             System.out.println(operation);
             System.out.println(newEmojiPayloadData.getEmojiIdx());
             if (operation.equals("DELETE")) {
-//                Emoji emoji = emojiRepository.findById(newEmojiPayloadData.getEmojiIdx()).orElseThrow();
                 emojiRepository.deleteById(newEmojiPayloadData.getEmojiIdx());
             } else {
                 Emoji emoji = Emoji.builder()
@@ -121,7 +117,6 @@ public class Consumer {
         }
     }
 
-//    @Transactional(isolation = Isolation.SERIALIZABLE)
     @KafkaListener(topics = "role_payload_log", groupId = "role_payload_group", containerFactory = "roleKafkaListenerContainerFactory")
     public void consumeRole(NewRolePayloadData newRolePayloadData) {
         System.out.println("이벤트 수신...");
@@ -147,7 +142,6 @@ public class Consumer {
         }
     }
 
-//    @Transactional(isolation = Isolation.SERIALIZABLE)
     @KafkaListener(topics = "interaction_payload_log", groupId = "interaction_payload_group", containerFactory = "interactionKafkaListenerContainerFactory")
     public void consumeInteraction(NewInteractionPayloadData newInteractionPayloadData) {
         System.out.println("이벤트 수신...");
@@ -175,7 +169,6 @@ public class Consumer {
         }
     }
 
-//    @Transactional(isolation = Isolation.SERIALIZABLE)
     @KafkaListener(topics = "post_payload_log", groupId = "post_payload_group", containerFactory = "postKafkaListenerContainerFactory")
     public void consumePost(NewPostPayloadData newPostPayloadData) {
         System.out.println("이벤트 수신...");

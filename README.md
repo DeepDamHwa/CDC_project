@@ -157,6 +157,12 @@ CDC 방식을 **선택하게 된 이유**는 다음과 같다.
 5. 조회한 데이터와 필요한 정보를 MySQL이 적재 가능한 객체 형태로 담아 Kafka로 발행한다.(topic: payload)
 6. Data Loader 서버가 Kafka로부터 데이터를 가져와 MySql에 동기화한다.
 
+<br>
+
+#### 시스템 설계
+- [Kafka 사용 이유]()
+- [왜 Spring Batch 사용 이유]()
+
 
 <br><br><br>
 ## 🔗 시스템 개선 과정
