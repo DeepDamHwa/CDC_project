@@ -57,7 +57,7 @@ public class Consumer {
                 consumePost(operation,logInfo);
             }else if(tableName.equals("ROLE")){
                 consumeRole(operation,logInfo);
-            }else if(tableName.equals("USER")){
+            }else if(tableName.equals("USERS")){
                 consumeUser(operation,logInfo);
             }
 
