@@ -229,7 +229,7 @@ CDC 방식을 **선택하게 된 이유**는 다음과 같다.
 <br>미처리된 트랜잭션을 ACTIVE_TRANS 테이블에 저장하고, 이후 배치 실행 시 해당 테이블에서 커밋 여부를 재확인하여 커밋된 데이터만 Kafka로 전송하도록 로직 개선
 <br>
 
-### [4. Kafka 토픽 분리로 인한 데이터 정합성 문제 발생](https://github.com/DeepDamHwa/CDC_project/wiki/%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%EC%9D%B4-%EC%BB%A4%EB%B0%8B%EB%90%9C-%ED%9B%84%EC%97%90%EB%8F%84-Kafka%EB%A1%9C-%EC%A0%84%EC%86%A1%EB%90%98%EC%A7%80-%EC%95%8A%EC%95%84-%EB%8D%B0%EC%9D%B4%ED%84%B0%EA%B0%80-%EB%88%84%EB%9D%BD%EB%90%98%EB%8A%94-%EB%AC%B8%EC%A0%9C-%EB%B0%9C%EC%83%9D)
+### [4. Kafka 토픽 분리로 인한 데이터 정합성 문제 발생](https://github.com/DeepDamHwa/CDC_project/wiki/Kafka-%ED%86%A0%ED%94%BD-%EB%B6%84%EB%A6%AC%EB%A1%9C-%EC%9D%B8%ED%95%9C-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%A0%95%ED%95%A9%EC%84%B1-%EB%AC%B8%EC%A0%9C-%EB%B0%9C%EC%83%9D)
 
 **[문제]**
 <br>Data Loader에서 토픽 처리 과정에서, 테이블별로 발행된 Kafka 토픽이 병렬 처리되면서 DML 순서 불일치로 데이터 정합성 문제가 발생함.
