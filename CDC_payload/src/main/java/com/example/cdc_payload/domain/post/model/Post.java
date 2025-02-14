@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
@@ -23,6 +24,8 @@ public class Post{
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
 
+    private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
 
     @ManyToOne
     @JoinColumn(name = "user_idx")
@@ -40,6 +43,6 @@ public class Post{
     }
 
     public String logToString() {
-        return idx+","+user.getIdx();
+        return idx+","+createdAt+","+modifiedAt+","+user.getIdx();
     }
 }
