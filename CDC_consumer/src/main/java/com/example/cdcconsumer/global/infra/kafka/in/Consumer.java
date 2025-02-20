@@ -19,13 +19,16 @@ import com.example.cdcconsumer.domain.user.NewUsersPayloadData;
 import com.example.cdcconsumer.domain.user.User;
 import com.example.cdcconsumer.domain.user.repository.UserRepository;
 import com.example.cdcconsumer.global.infra.kafka.out.DataProducer;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class Consumer {
     private final InteractionRepository interactionRepository;
@@ -57,11 +60,13 @@ public class Consumer {
                         .build();
                 commentRepository.save(comment);
             }
+            log.info("comment 처리 완료... "+String.valueOf(LocalDateTime.now()));
         } catch (Exception e) {
             System.out.println("예외 발생");
             e.printStackTrace();
             //실패시 Dead Letter에 메시지 발행
             dataProducer.sendCommentDeadLetter(newCommentsPayloadData);
+            log.info("comment 처리 실패... "+String.valueOf(LocalDateTime.now()));
         }
 
     }
@@ -85,10 +90,12 @@ public class Consumer {
                         .build();
                 userRepository.save(user);
             }
+            log.info("user 처리 완료... "+String.valueOf(LocalDateTime.now()));
         } catch (Exception e) {
             System.out.println("예외 발생");
             e.printStackTrace();
             dataProducer.sendUserDeadLetter(newUsersPayloadData);
+            log.info("user 처리 실패... "+String.valueOf(LocalDateTime.now()));
         }
     }
 
@@ -110,10 +117,12 @@ public class Consumer {
                     .build();
                 emojiRepository.save(emoji);
             }
+            log.info("emoji 처리 완료... "+String.valueOf(LocalDateTime.now()));
         } catch (Exception e) {
             System.out.println("예외 발생");
             e.printStackTrace();
             dataProducer.sendEmojiDeadLetter(newEmojiPayloadData);
+            log.info("emoji 처리 실패... "+String.valueOf(LocalDateTime.now()));
         }
     }
 
@@ -135,10 +144,12 @@ public class Consumer {
                         .build();
                 roleRepository.save(role);
             }
+            log.info("role 처리 완료... "+String.valueOf(LocalDateTime.now()));
         } catch (Exception e) {
             System.out.println("예외 발생");
             e.printStackTrace();
             dataProducer.sendRoleDeadLetter(newRolePayloadData);
+            log.info("role 처리 실패... "+String.valueOf(LocalDateTime.now()));
         }
     }
 
@@ -162,10 +173,12 @@ public class Consumer {
                         .emoji(Emoji.builder().idx(newInteractionPayloadData.getEmojiIdx()).build()).build();
                 interactionRepository.save(interaction);
             }
+            log.info("interaction 처리 완료... "+String.valueOf(LocalDateTime.now()));
         } catch (Exception e) {
             System.out.println("예외 발생");
             e.printStackTrace();
             dataProducer.sendInteractionDeadLetter(newInteractionPayloadData);
+            log.info("interaction 처리 실패... "+String.valueOf(LocalDateTime.now()));
         }
     }
 
@@ -188,10 +201,12 @@ public class Consumer {
                         .build();
                 postRepository.save(post);
             }
+            log.info("post 처리 완료... "+String.valueOf(LocalDateTime.now()));
         } catch (Exception e) {
             System.out.println("예외 발생");
             e.printStackTrace();
             dataProducer.sendPostDeadLetter(newPostPayloadData);
+            log.info("post 처리 실패... "+String.valueOf(LocalDateTime.now()));
         }
     }
 }
